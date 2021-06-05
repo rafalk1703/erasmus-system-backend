@@ -1,7 +1,6 @@
 package pl.agh.edu.erasmus_system.model;
 
 import lombok.*;
-import pl.agh.edu.erasmus_system.Utils.Degree;
 
 import javax.persistence.*;
 
@@ -18,13 +17,15 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contracts_coordinator_id", nullable = false)
     private ContractsCoordinator contractsCoordinator;
 
     @Column(nullable = false)
     private String erasmusCode;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "academy_id", nullable = false)
     private Academy academy;
 
     @Column(nullable = false)
@@ -40,6 +41,7 @@ public class Contract {
     @Column(nullable = false)
     private Long endYear;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "edition_id", nullable = false)
     private Edition edition;
 }

@@ -1,4 +1,4 @@
-package pl.agh.edu.erasmus_system.Utils;
+package pl.agh.edu.erasmus_system.model;
 
 
 public enum Degree {

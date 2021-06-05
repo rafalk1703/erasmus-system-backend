@@ -1,8 +1,6 @@
 package pl.agh.edu.erasmus_system.model;
 
 import lombok.*;
-import pl.agh.edu.erasmus_system.Utils.Degree;
-import pl.agh.edu.erasmus_system.Utils.Year;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;

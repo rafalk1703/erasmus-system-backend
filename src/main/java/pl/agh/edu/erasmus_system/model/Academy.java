@@ -25,4 +25,7 @@ public class Academy {
 
     @Column(nullable = false)
     private String city;
+
+    @Column(nullable = false)
+    private String code;
 }
