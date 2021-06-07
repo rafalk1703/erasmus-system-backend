@@ -1,29 +1,34 @@
 package pl.agh.edu.erasmus_system.model;
 
 import lombok.*;
-import javax.validation.constraints.Email;
+
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 
 @Entity
-@Table(name = "users")
+@Table(name = "contractCoordinators")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+
+public class ContractsCoordinator {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String firstName;
+    @Column(nullable = false)
+    private String name;
 
-    private String lastName;
+    @Column(nullable = false)
+    private String surname;
 
     @Email
     @Column(nullable = false)
     private String email;
 
-
+    @Column(nullable = false)
+    private String hash;
 }
