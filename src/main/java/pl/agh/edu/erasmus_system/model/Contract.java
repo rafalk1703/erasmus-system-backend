@@ -29,17 +29,17 @@ public class Contract {
     private Academy academy;
 
     @Column(nullable = false)
-    private Long vacancies;
+    private Integer vacancies;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Degree degree;
 
     @Column(nullable = false)
-    private Long startYear;
+    private Integer startYear;
 
     @Column(nullable = false)
-    private Long endYear;
+    private Integer endYear;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "edition_id", nullable = false)

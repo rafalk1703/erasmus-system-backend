@@ -22,13 +22,13 @@ public class ContractsCoordinator {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String surname;
-
     @Email
-    @Column(nullable = false)
+    @Column
     private String email;
 
     @Column(nullable = false)
     private String hash;
+
+    @Column(nullable = false)
+    private String code;
 }

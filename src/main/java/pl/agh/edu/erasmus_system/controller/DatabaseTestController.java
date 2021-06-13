@@ -46,13 +46,12 @@ public class DatabaseTestController {
         studentRepository.save(student);
 
         Edition edition = new Edition();
-        edition.setYear(2020L);
+        edition.setYear(2020);
         editionRepository.save(edition);
 
 
         ContractsCoordinator contractsCoordinator = new ContractsCoordinator();
-        contractsCoordinator.setName("Jakub");
-        contractsCoordinator.setSurname("Nowak");
+        contractsCoordinator.setName("Jakub Nowak");
         contractsCoordinator.setEmail("jn@mail.com");
         contractsCoordinator.setHash("abcd123");
         contractCoordinatorRepository.save(contractsCoordinator);
@@ -69,9 +68,9 @@ public class DatabaseTestController {
         contract.setErasmusCode("ASDF");
         contract.setAcademy(academy);
         contract.setDegree(Degree.BACHELOR);
-        contract.setVacancies(2L);
-        contract.setStartYear(2019L);
-        contract.setEndYear(2021L);
+        contract.setVacancies(2);
+        contract.setStartYear(2019);
+        contract.setEndYear(2021);
         contract.setEdition(edition);
         contractRepository.save(contract);
 
@@ -80,7 +79,7 @@ public class DatabaseTestController {
         registration.setStudent(student);
         registration.setIsAccepted(Boolean.FALSE);
         registration.setIsNominated(Boolean.TRUE);
-        registration.setPriority(1L);
+        registration.setPriority(1);
         registrationRepository.save(registration);
 
     }
