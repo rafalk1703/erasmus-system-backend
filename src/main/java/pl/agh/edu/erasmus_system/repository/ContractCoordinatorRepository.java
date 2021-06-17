@@ -12,4 +12,6 @@ public interface ContractCoordinatorRepository extends JpaRepository<ContractsCo
 
     Optional<ContractsCoordinator> findByEmail(String email);
 
+    Optional<ContractsCoordinator> findByName(String name);
+
 }

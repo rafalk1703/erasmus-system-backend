@@ -23,6 +23,7 @@ public class ReadCSVFileService {
     @Autowired
     private ContractRepository contractRepository;
 
+
     public void saveCoordinatorsToDatabase(String fileName) {
         List<String[]> r = null;
         try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
@@ -37,7 +38,6 @@ public class ReadCSVFileService {
 
                 ContractsCoordinator contractsCoordinator = new ContractsCoordinator();
                 contractsCoordinator.setName(Array.get(arrays, 0).toString());
-//                System.out.println(Array.get(arrays, 1).toString());
                 contractsCoordinator.setCode(Array.get(arrays, 1).toString());
                 contractCoordinatorRepository.save(contractsCoordinator);
             }
@@ -54,22 +54,54 @@ public class ReadCSVFileService {
         }
 
         Edition edition = new Edition();
-        edition.setYear(2021);
+        edition.setYear("2021");
         int listIndex = 0;
         for (String[] arrays : r) {
             if (listIndex++ > 0) {
 
-                Contract contract = new Contract();
-                contract.setEdition(edition);
-//                contract.setDegree();
-
-                ContractsCoordinator contractsCoordinator = new ContractsCoordinator();
-                contractsCoordinator.setName(Array.get(arrays, 0).toString());
-//                System.out.println(Array.get(arrays, 1).toString());
-                contractsCoordinator.setCode(Array.get(arrays, 1).toString());
-                contractCoordinatorRepository.save(contractsCoordinator);
+                if (!Array.get(arrays, 7).toString().equals("0")) {
+                    Contract contract = new Contract();
+                    contract.setEdition(edition);
+                    contract.setErasmusCode(Array.get(arrays, 0).toString());
+                    contract.setAcademy(Array.get(arrays, 1).toString());
+                    contract.setStartYear(Array.get(arrays, 2).toString());
+                    contract.setEndYear(Array.get(arrays, 3).toString());
+                    contract.setContractsCoordinator(contractCoordinatorRepository.findByName(Array.get(arrays, 4).toString()).get());
+                    contract.setFaculty(Array.get(arrays, 5).toString());
+                    contract.setVacancies(Integer.parseInt(Array.get(arrays, 7).toString()));
+                    contract.setDegree("1st");
+                    contractRepository.save(contract);
+                }
+                if (!Array.get(arrays, 8).toString().equals("0")) {
+                    Contract contract = new Contract();
+                    contract.setEdition(edition);
+                    contract.setErasmusCode(Array.get(arrays, 0).toString());
+                    contract.setAcademy(Array.get(arrays, 1).toString());
+                    contract.setStartYear(Array.get(arrays, 2).toString());
+                    contract.setEndYear(Array.get(arrays, 3).toString());
+                    contract.setContractsCoordinator(contractCoordinatorRepository.findByName(Array.get(arrays, 4).toString()).get());
+                    contract.setFaculty(Array.get(arrays, 5).toString());
+                    contract.setVacancies(Integer.parseInt(Array.get(arrays, 8).toString()));
+                    contract.setDegree("2st");
+                    contractRepository.save(contract);
+                }
+                if (!Array.get(arrays, 9).toString().equals("0")) {
+                    Contract contract = new Contract();
+                    contract.setEdition(edition);
+                    contract.setErasmusCode(Array.get(arrays, 0).toString());
+                    contract.setAcademy(Array.get(arrays, 1).toString());
+                    contract.setStartYear(Array.get(arrays, 2).toString());
+                    contract.setEndYear(Array.get(arrays, 3).toString());
+                    contract.setContractsCoordinator(contractCoordinatorRepository.findByName(Array.get(arrays, 4).toString()).get());
+                    contract.setFaculty(Array.get(arrays, 5).toString());
+                    contract.setVacancies(Integer.parseInt(Array.get(arrays, 9).toString()));
+                    contract.setDegree("3st");
+                    contractRepository.save(contract);
+                }
             }
 
         }
     }
+
+
 }

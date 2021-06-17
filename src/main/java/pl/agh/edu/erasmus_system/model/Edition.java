@@ -18,5 +18,5 @@ public class Edition {
     private Long id;
 
     @Column(nullable = false)
-    private Integer year;
+    private String year;
 }

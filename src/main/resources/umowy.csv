@@ -1,0 +1,10 @@
+Kod,Nazwa,Od,Do,Opiekun,Wydział,Kod opiekuna,Miejsca 1,Miejsca 2,Miejsca 3
+A WIEN20,Fachhochschule Technikum Wien,2014/2015,2020/2021,dr inż. Tomasz Marcin Orzechowski,WIEiT,TMO,20,10,10
+AV FONT02,ESIGETEL - École Supérieure d'ingénieurs en Informatique et Génie des Télécommunications,2014/2015,2020/2021,dr inż. Małgorzata Żabińska-Rakoczy,WIEiT,MŻR,10,20,20
+B BRUXEL04,Université Libre de Bruxelles,2017/2018,2020/2021,dr inż. Małgorzata Żabińska-Rakoczy,WIEiT,MŻR,20,0,10
+B GENT01,Universiteit Gent,2014/2015,2020/2021,prof. dr hab. inż. Andrzej Kos,WIEiT,AK,20,20,0
+BG BOURGAS02,Prof.dr. Asen Zlatarov University,2014/2015,2020/2021,dr inż. Tomasz Marcin Orzechowski,WIEiT,TMO,0,0,0
+BG ROUSSE 01,Angel Kanchev University of Ruse,2014/2015,2020/2021,dr inż. Tomasz Marcin Orzechowski,WIEiT,TMO,0,20,0
+BG SHOUMEN01,Konstantin Preslavsky University of Shumen,2014/2015,2020/2021,dr inż. Tomasz Marcin Orzechowski,WIEiT,TMO,20,0,0
+BG SOFIA16,Technical University-Sofia,2014/2015,2020/2021,dr inż. Tomasz Marcin Orzechowski,WIEiT,TMO,20,20,20
+BG SOFIA28,College of Telecommunications and Post,2014/2015,2020/2021,dr inż. Tomasz Marcin Orzechowski,WIEiT,TMO,20,10,20

@@ -36,11 +36,11 @@ public class DatabaseTestController {
     @GetMapping("addstudent")
     public void getUser() {
         Student student = new Student();
-        student.setDegree(Degree.BACHELOR);
+        student.setDegree("Inz");
         student.setName("Jan");
         student.setSurname("Kowalski");
         student.setDepartment("WIET");
-        student.setYear(Year.FIFTH);
+        student.setYear("2017/2018");
         student.setField("Informatyka");
         student.setEmail("jk@mail.com");
         studentRepository.save(student);
@@ -67,10 +67,10 @@ public class DatabaseTestController {
         contract.setContractsCoordinator(contractsCoordinator);
         contract.setErasmusCode("ASDF");
         contract.setAcademy(academy);
-        contract.setDegree(Degree.BACHELOR);
+        contract.setDegree("Inz");
         contract.setVacancies(2);
-        contract.setStartYear(2019);
-        contract.setEndYear(2021);
+        contract.setStartYear("2019");
+        contract.setEndYear("2021");
         contract.setEdition(edition);
         contractRepository.save(contract);
 
