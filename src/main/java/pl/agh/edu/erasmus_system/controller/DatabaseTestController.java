@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.agh.edu.erasmus_system.model.*;
 import pl.agh.edu.erasmus_system.repository.*;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @RestController
@@ -95,7 +96,20 @@ public class DatabaseTestController {
     }
 
     @GetMapping("getcontracts")
-    public List<Contract> getContracts() {
-        return contractRepository.findAll();
+    public List<String> getContracts() {
+        List<String> result = new LinkedList<>();
+        for (Contract contract : contractRepository.findAll()) {
+            result.add(contract.getErasmusCode());
+        }
+        return result;
+    }
+
+    @GetMapping("getregistrations")
+    public List<String> getRegistrations() {
+        List<String> result = new LinkedList<>();
+        for (Registration registration : registrationRepository.findAll()) {
+            result.add(registration.getId().toString());
+        }
+        return result;
     }
 }

@@ -63,7 +63,8 @@ public class ReadCSVFileService {
 
         Edition edition = new Edition();
         edition.setYear("2021");
-        editionRepository.save(edition);
+        if (!editionRepository.findByYear("2021").isPresent())
+            editionRepository.save(edition);
 
         int listIndex = 0;
         for (String[] arrays : r) {
