@@ -25,9 +25,6 @@ public class Student {
     private String surname;
 
     @Column(nullable = false)
-    private String degree;
-
-    @Column(nullable = false)
     private String year;
 
     @Email

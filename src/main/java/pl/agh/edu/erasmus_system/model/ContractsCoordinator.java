@@ -26,7 +26,7 @@ public class ContractsCoordinator {
     @Column
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String hash;
 
     @Column(nullable = false)

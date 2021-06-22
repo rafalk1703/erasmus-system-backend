@@ -3,11 +3,8 @@ package pl.agh.edu.erasmus_system.service;
 import com.opencsv.CSVReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.agh.edu.erasmus_system.model.Contract;
-import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
-import pl.agh.edu.erasmus_system.model.Edition;
-import pl.agh.edu.erasmus_system.repository.ContractCoordinatorRepository;
-import pl.agh.edu.erasmus_system.repository.ContractRepository;
+import pl.agh.edu.erasmus_system.model.*;
+import pl.agh.edu.erasmus_system.repository.*;
 
 import java.io.FileReader;
 import java.lang.reflect.Array;
@@ -23,6 +20,16 @@ public class ReadCSVFileService {
     @Autowired
     private ContractRepository contractRepository;
 
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private RegistrationRepository registrationRepository;
+
+    @Autowired
+    private EditionRepository editionRepository;
+
+
 
     public void saveCoordinatorsToDatabase(String fileName) {
         List<String[]> r = null;
@@ -35,11 +42,12 @@ public class ReadCSVFileService {
         int listIndex = 0;
         for (String[] arrays : r) {
             if (listIndex++ > 0) {
-
                 ContractsCoordinator contractsCoordinator = new ContractsCoordinator();
                 contractsCoordinator.setName(Array.get(arrays, 0).toString());
                 contractsCoordinator.setCode(Array.get(arrays, 1).toString());
-                contractCoordinatorRepository.save(contractsCoordinator);
+                if (!contractCoordinatorRepository.findByName(Array.get(arrays, 0).toString()).isPresent()) {
+                    contractCoordinatorRepository.save(contractsCoordinator);
+                }
             }
 
         }
@@ -55,6 +63,8 @@ public class ReadCSVFileService {
 
         Edition edition = new Edition();
         edition.setYear("2021");
+        editionRepository.save(edition);
+
         int listIndex = 0;
         for (String[] arrays : r) {
             if (listIndex++ > 0) {
@@ -66,11 +76,14 @@ public class ReadCSVFileService {
                     contract.setAcademy(Array.get(arrays, 1).toString());
                     contract.setStartYear(Array.get(arrays, 2).toString());
                     contract.setEndYear(Array.get(arrays, 3).toString());
-                    contract.setContractsCoordinator(contractCoordinatorRepository.findByName(Array.get(arrays, 4).toString()).get());
+                    ContractsCoordinator contractsCoordinator = contractCoordinatorRepository.findByName(Array.get(arrays, 4).toString()).get();
+                    contract.setContractsCoordinator(contractsCoordinator);
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 7).toString()));
                     contract.setDegree("1st");
-                    contractRepository.save(contract);
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_Code(contract.getErasmusCode(), contractsCoordinator.getCode()).isPresent()) {
+                        contractRepository.save(contract);
+                    }
                 }
                 if (!Array.get(arrays, 8).toString().equals("0")) {
                     Contract contract = new Contract();
@@ -79,11 +92,14 @@ public class ReadCSVFileService {
                     contract.setAcademy(Array.get(arrays, 1).toString());
                     contract.setStartYear(Array.get(arrays, 2).toString());
                     contract.setEndYear(Array.get(arrays, 3).toString());
-                    contract.setContractsCoordinator(contractCoordinatorRepository.findByName(Array.get(arrays, 4).toString()).get());
+                    ContractsCoordinator contractsCoordinator = contractCoordinatorRepository.findByName(Array.get(arrays, 4).toString()).get();
+                    contract.setContractsCoordinator(contractsCoordinator);
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 8).toString()));
                     contract.setDegree("2st");
-                    contractRepository.save(contract);
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_Code(contract.getErasmusCode(), contractsCoordinator.getCode()).isPresent()) {
+                        contractRepository.save(contract);
+                    }
                 }
                 if (!Array.get(arrays, 9).toString().equals("0")) {
                     Contract contract = new Contract();
@@ -92,12 +108,51 @@ public class ReadCSVFileService {
                     contract.setAcademy(Array.get(arrays, 1).toString());
                     contract.setStartYear(Array.get(arrays, 2).toString());
                     contract.setEndYear(Array.get(arrays, 3).toString());
-                    contract.setContractsCoordinator(contractCoordinatorRepository.findByName(Array.get(arrays, 4).toString()).get());
+                    ContractsCoordinator contractsCoordinator = contractCoordinatorRepository.findByName(Array.get(arrays, 4).toString()).get();
+                    contract.setContractsCoordinator(contractsCoordinator);
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 9).toString()));
                     contract.setDegree("3st");
-                    contractRepository.save(contract);
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_Code(contract.getErasmusCode(), contractsCoordinator.getCode()).isPresent()) {
+                        contractRepository.save(contract);
+                    }
                 }
+            }
+
+        }
+    }
+
+    public void saveRegistrationsToDatabase(String fileName) {
+        List<String[]> r = null;
+        try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+            r = reader.readAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Edition edition = editionRepository.findByYear("2021").get();
+
+        int listIndex = 0;
+        for (String[] arrays : r) {
+            if (listIndex++ > 0) {
+                Registration registration = new Registration();
+                Student student = new Student();
+                student.setName(Array.get(arrays, 4).toString());
+                student.setSurname(Array.get(arrays, 5).toString());
+                student.setDepartment(Array.get(arrays, 3).toString());
+                student.setEmail(Array.get(arrays, 7).toString());
+                student.setYear(Array.get(arrays, 2).toString());
+                student.setField(Array.get(arrays, 22).toString());
+                studentRepository.save(student);
+                registration.setIsNominated(false);
+                registration.setIsAccepted(false);
+                registration.setStudent(student);
+                registration.setPriority(Integer.parseInt(Array.get(arrays, 21).toString()));
+                ContractsCoordinator contractsCoordinator = contractCoordinatorRepository.findByName(Array.get(arrays, 15).toString()).get();
+                String erasmusCode = Array.get(arrays, 17).toString();
+                Contract contract = contractRepository.findByErasmusCodeAndContractsCoordinator_Code(erasmusCode, contractsCoordinator.getCode()).get();
+                registration.setContract(contract);
+                registrationRepository.save(registration);
             }
 
         }
