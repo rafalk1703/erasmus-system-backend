@@ -26,7 +26,7 @@ public class Registration {
     private Student student;
 
     @Column(nullable = false)
-    private Long priority;
+    private Integer priority;
 
     @Column(nullable = false)
     private Boolean isNominated;

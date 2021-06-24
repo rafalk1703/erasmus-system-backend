@@ -24,8 +24,6 @@ public class ContractController {
         List<Contract> contracts = contractRepository.findAll();
 
         for (Contract contract : contracts) {
-            ContractAcademyResponseBody contractAcademyResponseBody =
-                    new ContractAcademyResponseBody(contract.getAcademy());
             ContractCoordinatorResponseBody contractCoordinatorResponseBody =
                     new ContractCoordinatorResponseBody(contract.getContractsCoordinator());
             ContractEditionResponseBody contractEditionResponseBody =
@@ -33,14 +31,14 @@ public class ContractController {
             ContractSingleResponseBody single =
             new ContractSingleResponseBody(
                     contract.getId(),
-                    contractAcademyResponseBody,
                     contractCoordinatorResponseBody,
                     contractEditionResponseBody,
                     contract.getErasmusCode(),
                     contract.getVacancies(),
-                    contract.getDegree().toString(),
+                    contract.getDegree(),
                     contract.getStartYear(),
-                    contract.getEndYear());
+                    contract.getEndYear(),
+                    contract.getFaculty());
             response.add(single);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);

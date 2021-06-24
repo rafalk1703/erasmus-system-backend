@@ -8,13 +8,13 @@ import lombok.Getter;
 public class ContractSingleResponseBody {
 
     private Long id;
-    private ContractAcademyResponseBody contractAcademy;
     private ContractCoordinatorResponseBody contractCoordinator;
     private ContractEditionResponseBody contractEdition;
     private String erasmusCode;
-    private Long vacancies;
+    private Integer vacancies;
     private String degree;
-    private Long startYear;
-    private Long endYear;
+    private String startYear;
+    private String endYear;
+    private String faculty;
 
 }

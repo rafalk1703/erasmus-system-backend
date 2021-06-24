@@ -25,12 +25,7 @@ public class Student {
     private String surname;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Degree degree;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Year year;
+    private String year;
 
     @Email
     @Column(nullable = false)

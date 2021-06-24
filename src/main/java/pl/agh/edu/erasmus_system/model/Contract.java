@@ -24,24 +24,25 @@ public class Contract {
     @Column(nullable = false)
     private String erasmusCode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "academy_id", nullable = false)
-    private Academy academy;
+    @JoinColumn(nullable = false)
+    private String academy;
 
     @Column(nullable = false)
-    private Long vacancies;
+    private Integer vacancies;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Degree degree;
+    private String degree;
 
     @Column(nullable = false)
-    private Long startYear;
+    private String startYear;
 
     @Column(nullable = false)
-    private Long endYear;
+    private String endYear;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "edition_id", nullable = false)
     private Edition edition;
+
+    @Column(nullable = false)
+    private String faculty;
 }
