@@ -1,11 +1,11 @@
 package pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
+/**
+ * POJO class contains body of response /allContractCoordinatorsView
+ */
 public class ContractCoordinatorResponseBody {
     private List<ContractCoordinatorSingleResponseBody> contractCoordinators;
 

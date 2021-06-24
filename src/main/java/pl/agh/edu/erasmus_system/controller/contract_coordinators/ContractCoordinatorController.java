@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies.ContractCoordinatorResponseBody;
 import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies.ContractCoordinatorSingleResponseBody;
+import pl.agh.edu.erasmus_system.model.Contract;
 import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
 import pl.agh.edu.erasmus_system.repository.ContractCoordinatorRepository;
+
+import java.util.*;
 
 @RestController
 @RequestMapping("api/")
@@ -23,13 +26,15 @@ public class ContractCoordinatorController {
     @RequestMapping(value = "/allContractCoordinatorsView", method = RequestMethod.GET)
     public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinators() {
         ContractCoordinatorResponseBody response = new ContractCoordinatorResponseBody();
-        for (ContractsCoordinator contractsCoordinator : contractCoordinatorRepository.findAll()) {
+        List<ContractsCoordinator> contracts = contractCoordinatorRepository.findAll();
+        for (ContractsCoordinator contractsCoordinator : contracts) {
+            System.out.println(contractsCoordinator.getCode());
             ContractCoordinatorSingleResponseBody single =
                     new ContractCoordinatorSingleResponseBody(
                             contractsCoordinator.getId(),
                             contractsCoordinator.getName(),
-                            contractsCoordinator.getSurname(),
-                            contractsCoordinator.getEmail()
+                            contractsCoordinator.getEmail(),
+                            contractsCoordinator.getCode()
                     );
             response.add(single);
         }

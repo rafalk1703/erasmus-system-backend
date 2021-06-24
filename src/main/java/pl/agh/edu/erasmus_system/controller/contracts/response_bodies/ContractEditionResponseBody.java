@@ -7,7 +7,7 @@ import pl.agh.edu.erasmus_system.model.Edition;
 public class ContractEditionResponseBody {
 
     private Long id;
-    private Long year;
+    private String year;
 
     public ContractEditionResponseBody(Edition edition) {
         this.id = edition.getId();

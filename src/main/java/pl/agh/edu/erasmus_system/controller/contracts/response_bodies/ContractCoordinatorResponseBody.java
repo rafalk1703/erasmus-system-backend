@@ -7,13 +7,13 @@ import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
 public class ContractCoordinatorResponseBody {
     private Long id;
     private String name;
-    private String surname;
     private String email;
+    private String code;
 
     public ContractCoordinatorResponseBody(ContractsCoordinator contractsCoordinator) {
         this.id = contractsCoordinator.getId();
         this.name = contractsCoordinator.getName();
-        this.surname = contractsCoordinator.getSurname();
         this.email = contractsCoordinator.getEmail();
+        this.code = contractsCoordinator.getCode();
     }
 }
