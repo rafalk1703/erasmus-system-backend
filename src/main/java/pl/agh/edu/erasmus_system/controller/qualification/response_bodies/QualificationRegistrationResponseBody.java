@@ -7,7 +7,7 @@ import pl.agh.edu.erasmus_system.model.Registration;
 public class QualificationRegistrationResponseBody {
     private Long id;
     private QualificationStudentResponseBody student;
-    private Long priority;
+    private Integer priority;
     private Boolean isNominated;
     private Boolean isAccepted;
 

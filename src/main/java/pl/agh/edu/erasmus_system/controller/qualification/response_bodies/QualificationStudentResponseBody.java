@@ -8,7 +8,6 @@ public class QualificationStudentResponseBody {
     private Long id;
     private String name;
     private String surname;
-    private String degree;
     private String year;
     private String email;
     private String department;
@@ -18,8 +17,7 @@ public class QualificationStudentResponseBody {
         this.id = student.getId();
         this.name = student.getName();
         this.surname = student.getSurname();
-        this.degree = student.getDegree().toString();
-        this.year = student.getYear().toString();
+        this.year = student.getYear();
         this.email = student.getEmail();
         this.department = student.getDepartment();
         this.field = student.getField();

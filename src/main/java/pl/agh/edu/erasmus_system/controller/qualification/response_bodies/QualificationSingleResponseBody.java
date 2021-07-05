@@ -14,6 +14,6 @@ public class QualificationSingleResponseBody {
     private Long id;
     private QualificationCoordinatorResponseBody contractsCoordinator;
     private String erasmusCode;
-    private Long vacancies;
+    private Integer vacancies;
     private List<QualificationRegistrationResponseBody> registrations;
 }
