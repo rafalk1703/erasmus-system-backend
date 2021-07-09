@@ -26,6 +26,7 @@ public class ImportDataController {
             try {
 
                 readCSVFileService.saveCoordinatorsToDatabase(newFile);
+                newFile.delete();
 
                 //Response response = new Response("Done", name);
                 //return response;
@@ -52,6 +53,7 @@ public class ImportDataController {
         fos.close();
         return convFile;
     }
+
 //
 //    @GetMapping("import")
 //    public void importData() {
