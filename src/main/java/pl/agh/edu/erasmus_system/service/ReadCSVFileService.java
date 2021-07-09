@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.agh.edu.erasmus_system.model.*;
 import pl.agh.edu.erasmus_system.repository.*;
 
+import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Array;
 import java.util.List;
@@ -44,6 +45,30 @@ public class ReadCSVFileService {
             if (listIndex++ > 0) {
                 ContractsCoordinator contractsCoordinator = new ContractsCoordinator();
                 contractsCoordinator.setName(Array.get(arrays, 0).toString());
+                contractsCoordinator.setCode(Array.get(arrays, 1).toString());
+                if (!contractCoordinatorRepository.findByName(Array.get(arrays, 0).toString()).isPresent()) {
+                    contractCoordinatorRepository.save(contractsCoordinator);
+                }
+            }
+
+        }
+    }
+
+    public void saveCoordinatorsToDatabase(File file) {
+        System.out.println("działa");
+        List<String[]> r = null;
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
+            r = reader.readAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        int listIndex = 0;
+        for (String[] arrays : r) {
+            if (listIndex++ > 0) {
+                ContractsCoordinator contractsCoordinator = new ContractsCoordinator();
+                contractsCoordinator.setName(Array.get(arrays, 0).toString());
+                System.out.println(Array.get(arrays, 0).toString());
                 contractsCoordinator.setCode(Array.get(arrays, 1).toString());
                 if (!contractCoordinatorRepository.findByName(Array.get(arrays, 0).toString()).isPresent()) {
                     contractCoordinatorRepository.save(contractsCoordinator);
