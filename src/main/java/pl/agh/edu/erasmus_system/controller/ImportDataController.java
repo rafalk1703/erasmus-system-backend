@@ -21,6 +21,8 @@ public class ImportDataController {
     @RequestMapping(value="/uploadCSV", method= RequestMethod.POST)
     public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
 
+        System.out.println("dzialaEndpoint");
+        System.out.println(file.getName());
         File newFile = convert(file);
         if (!file.isEmpty()) {
             try {
