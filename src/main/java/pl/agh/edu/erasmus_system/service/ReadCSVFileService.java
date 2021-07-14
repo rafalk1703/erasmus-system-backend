@@ -176,7 +176,8 @@ public class ReadCSVFileService {
                 registration.setPriority(Integer.parseInt(Array.get(arrays, 21).toString()));
                 ContractsCoordinator contractsCoordinator = contractCoordinatorRepository.findByName(Array.get(arrays, 15).toString()).get();
                 String erasmusCode = Array.get(arrays, 17).toString();
-                Contract contract = contractRepository.findByErasmusCodeAndContractsCoordinator_Code(erasmusCode, contractsCoordinator.getCode()).get();
+                //dodać rok edycji
+                Contract contract = contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEdition(erasmusCode, contractsCoordinator.getCode(), edition).get();
                 registration.setContract(contract);
                 registrationRepository.save(registration);
             }

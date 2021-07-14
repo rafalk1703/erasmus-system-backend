@@ -20,8 +20,28 @@ public class ContractController {
 
     @RequestMapping(value = "/allContractsView", method = RequestMethod.GET)
     public ResponseEntity<ContractResponseBody> getAllContracts() {
-        ContractResponseBody response = new ContractResponseBody();
+
         List<Contract> contracts = contractRepository.findAll();
+
+        return getContractResponseEntity(contracts);
+    }
+
+    @RequestMapping(value = "/allContractsView/{edition}", method = RequestMethod.GET)
+    public ResponseEntity<ContractResponseBody> getAllContractsByEdition(@PathVariable("edition") String edition) {
+
+        List<Contract> contractsByEdition = contractRepository.findByEdition_Year(edition);
+        return getContractResponseEntity(contractsByEdition);
+    }
+
+    @RequestMapping(value = "/allContractsView/{edition}/{coordinator_code}", method = RequestMethod.GET)
+    public ResponseEntity<ContractResponseBody> getAllContractsByEditionAndCoordinator(@PathVariable("edition") String edition, @PathVariable("coordinator_code") String coordinatorCode) {
+
+        List<Contract> contractsByEditionAndCoordinator = contractRepository.findByEdition_YearAndContractsCoordinator_Code(edition, coordinatorCode);
+        return getContractResponseEntity(contractsByEditionAndCoordinator);
+    }
+
+    private ResponseEntity<ContractResponseBody> getContractResponseEntity(List<Contract> contracts) {
+        ContractResponseBody response = new ContractResponseBody();
 
         for (Contract contract : contracts) {
             ContractCoordinatorResponseBody contractCoordinatorResponseBody =
@@ -29,16 +49,16 @@ public class ContractController {
             ContractEditionResponseBody contractEditionResponseBody =
                     new ContractEditionResponseBody(contract.getEdition());
             ContractSingleResponseBody single =
-            new ContractSingleResponseBody(
-                    contract.getId(),
-                    contractCoordinatorResponseBody,
-                    contractEditionResponseBody,
-                    contract.getErasmusCode(),
-                    contract.getVacancies(),
-                    contract.getDegree(),
-                    contract.getStartYear(),
-                    contract.getEndYear(),
-                    contract.getFaculty());
+                    new ContractSingleResponseBody(
+                            contract.getId(),
+                            contractCoordinatorResponseBody,
+                            contractEditionResponseBody,
+                            contract.getErasmusCode(),
+                            contract.getVacancies(),
+                            contract.getDegree(),
+                            contract.getStartYear(),
+                            contract.getEndYear(),
+                            contract.getFaculty());
             response.add(single);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
