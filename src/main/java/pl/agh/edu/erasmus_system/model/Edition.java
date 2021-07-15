@@ -19,4 +19,6 @@ public class Edition {
 
     @Column(nullable = false)
     private String year;
+
+    private Boolean isActive;
 }
