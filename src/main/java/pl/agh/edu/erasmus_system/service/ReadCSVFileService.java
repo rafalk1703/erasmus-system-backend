@@ -78,17 +78,17 @@ public class ReadCSVFileService {
         }
     }
 
-    public void saveContractsToDatabase(String fileName) {
+    public void saveContractsToDatabase(File file, String year) {
         List<String[]> r = null;
-        try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
             r = reader.readAll();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         Edition edition = new Edition();
-        edition.setYear("2021");
-        if (!editionRepository.findByYear("2021").isPresent())
+        edition.setYear(year);
+        if (!editionRepository.findByYear(year).isPresent())
             editionRepository.save(edition);
 
         int listIndex = 0;
@@ -148,15 +148,15 @@ public class ReadCSVFileService {
         }
     }
 
-    public void saveRegistrationsToDatabase(String fileName) {
+    public void saveRegistrationsToDatabase(File file, String year) {
         List<String[]> r = null;
-        try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
             r = reader.readAll();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Edition edition = editionRepository.findByYear("2021").get();
+        Edition edition = editionRepository.findByYear(year).get();
 
         int listIndex = 0;
         for (String[] arrays : r) {
@@ -176,7 +176,6 @@ public class ReadCSVFileService {
                 registration.setPriority(Integer.parseInt(Array.get(arrays, 21).toString()));
                 ContractsCoordinator contractsCoordinator = contractCoordinatorRepository.findByName(Array.get(arrays, 15).toString()).get();
                 String erasmusCode = Array.get(arrays, 17).toString();
-                //dodać rok edycji
                 Contract contract = contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEdition(erasmusCode, contractsCoordinator.getCode(), edition).get();
                 registration.setContract(contract);
                 registrationRepository.save(registration);
