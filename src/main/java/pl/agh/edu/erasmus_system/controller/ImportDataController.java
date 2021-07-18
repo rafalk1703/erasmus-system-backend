@@ -66,14 +66,14 @@ public class ImportDataController {
         readCSVFileService.saveCoordinatorsToDatabase("/Users/rafalkrajewski/Desktop/erasmus-system/inz-backend/erasmus-system-backend/src/main/resources/opiekunowie.csv");
     }
 
-    @GetMapping("contracts")
-    public void importContracts() {
-        readCSVFileService.saveContractsToDatabase("/Users/rafalkrajewski/Desktop/erasmus-system/inz-backend/erasmus-system-backend/src/main/resources/umowy.csv");
-    }
-
-    @GetMapping("registrations")
-    public void importRegistrations() {
-        readCSVFileService.saveRegistrationsToDatabase("/Users/rafalkrajewski/Desktop/erasmus-system/inz-backend/erasmus-system-backend/src/main/resources/zgloszenia.csv");
-    }
+//    @GetMapping("contracts")
+//    public void importContracts() {
+//        readCSVFileService.saveContractsToDatabase("/Users/rafalkrajewski/Desktop/erasmus-system/inz-backend/erasmus-system-backend/src/main/resources/umowy.csv");
+//    }
+//
+//    @GetMapping("registrations")
+//    public void importRegistrations() {
+//        readCSVFileService.saveRegistrationsToDatabase("/Users/rafalkrajewski/Desktop/erasmus-system/inz-backend/erasmus-system-backend/src/main/resources/zgloszenia.csv");
+//    }
 
 }

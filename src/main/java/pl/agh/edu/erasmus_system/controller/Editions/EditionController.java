@@ -63,6 +63,14 @@ public class EditionController {
         return editionRepository.findByIsActiveIsTrue();
     }
 
+    @RequestMapping(value = "/deactivate/{edition}", method = RequestMethod.GET)
+    public void deactivateEdition(@PathVariable("edition") String edition) {
+        Edition deactivatedEdition = editionRepository.findByYear(edition).get();
+        deactivatedEdition.setIsActive(false);
+        editionRepository.save(deactivatedEdition);
+
+    }
+
     @RequestMapping(value = "/add/{edition_year}", method= RequestMethod.POST)
     public @ResponseBody String addNewEdition(@PathVariable("edition_year") String editionYear,
                                               @RequestParam("coordinators_file") MultipartFile coordinatorsFile,

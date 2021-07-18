@@ -88,6 +88,7 @@ public class ReadCSVFileService {
 
         Edition edition = new Edition();
         edition.setYear(year);
+        edition.setIsActive(true);
         if (!editionRepository.findByYear(year).isPresent())
             editionRepository.save(edition);
 
