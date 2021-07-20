@@ -108,7 +108,7 @@ public class ReadCSVFileService {
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 7).toString()));
                     contract.setDegree("1st");
-                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_Code(contract.getErasmusCode(), contractsCoordinator.getCode()).isPresent()) {
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), "1st").isPresent()) {
                         contractRepository.save(contract);
                     }
                 }
@@ -124,7 +124,7 @@ public class ReadCSVFileService {
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 8).toString()));
                     contract.setDegree("2st");
-                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_Code(contract.getErasmusCode(), contractsCoordinator.getCode()).isPresent()) {
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), "2st").isPresent()) {
                         contractRepository.save(contract);
                     }
                 }
@@ -140,7 +140,7 @@ public class ReadCSVFileService {
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 9).toString()));
                     contract.setDegree("3st");
-                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_Code(contract.getErasmusCode(), contractsCoordinator.getCode()).isPresent()) {
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), "3st").isPresent()) {
                         contractRepository.save(contract);
                     }
                 }
@@ -177,7 +177,8 @@ public class ReadCSVFileService {
                 registration.setPriority(Integer.parseInt(Array.get(arrays, 21).toString()));
                 ContractsCoordinator contractsCoordinator = contractCoordinatorRepository.findByName(Array.get(arrays, 15).toString()).get();
                 String erasmusCode = Array.get(arrays, 17).toString();
-                Contract contract = contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEdition(erasmusCode, contractsCoordinator.getCode(), edition).get();
+                String degree = Array.get(arrays, 19).toString() + "st";
+                Contract contract = contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(erasmusCode, contractsCoordinator.getCode(), edition, degree).get();
                 registration.setContract(contract);
                 registrationRepository.save(registration);
             }
