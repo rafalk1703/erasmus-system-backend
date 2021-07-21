@@ -111,17 +111,26 @@ public class EditionController {
         EditionStatisticsResponseBody response = new EditionStatisticsResponseBody(id, editionYear, contracts.size(), numberOfRegistrations, numberOfContracts1Degree,
                 numberOfContracts2Degree, numberOfContracts3Degree, numberOfRegistrations1Degree, numberOfRegistrations2Degree,
                 numberOfRegistrations3Degree);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
 
     @RequestMapping(value = "/deactivate/{edition}", method = RequestMethod.GET)
-    public void deactivateEdition(@PathVariable("edition") String edition) {
+    public ResponseEntity deactivateEdition(@PathVariable("edition") String edition) {
         Edition deactivatedEdition = editionRepository.findByYear(edition).get();
         deactivatedEdition.setIsActive(false);
         editionRepository.save(deactivatedEdition);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
+    @RequestMapping(value = "/activate/{edition}", method = RequestMethod.GET)
+    public ResponseEntity activateEdition(@PathVariable("edition") String edition) {
+        Edition deactivatedEdition = editionRepository.findByYear(edition).get();
+        deactivatedEdition.setIsActive(true);
+        editionRepository.save(deactivatedEdition);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/add/{edition_year}", method= RequestMethod.POST)
