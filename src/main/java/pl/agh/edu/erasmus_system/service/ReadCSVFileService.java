@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.agh.edu.erasmus_system.model.*;
 import pl.agh.edu.erasmus_system.repository.*;
 
+import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Array;
 import java.util.List;
@@ -53,17 +54,42 @@ public class ReadCSVFileService {
         }
     }
 
-    public void saveContractsToDatabase(String fileName) {
+    public void saveCoordinatorsToDatabase(File file) {
+        System.out.println("działa");
         List<String[]> r = null;
-        try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
+            r = reader.readAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        int listIndex = 0;
+        for (String[] arrays : r) {
+            if (listIndex++ > 0) {
+                ContractsCoordinator contractsCoordinator = new ContractsCoordinator();
+                contractsCoordinator.setName(Array.get(arrays, 0).toString());
+                System.out.println(Array.get(arrays, 0).toString());
+                contractsCoordinator.setCode(Array.get(arrays, 1).toString());
+                if (!contractCoordinatorRepository.findByName(Array.get(arrays, 0).toString()).isPresent()) {
+                    contractCoordinatorRepository.save(contractsCoordinator);
+                }
+            }
+
+        }
+    }
+
+    public void saveContractsToDatabase(File file, String year) {
+        List<String[]> r = null;
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
             r = reader.readAll();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         Edition edition = new Edition();
-        edition.setYear("2021");
-        if (!editionRepository.findByYear("2021").isPresent())
+        edition.setYear(year);
+        edition.setIsActive(true);
+        if (!editionRepository.findByYear(year).isPresent())
             editionRepository.save(edition);
 
         int listIndex = 0;
@@ -82,7 +108,7 @@ public class ReadCSVFileService {
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 7).toString()));
                     contract.setDegree("1st");
-                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_Code(contract.getErasmusCode(), contractsCoordinator.getCode()).isPresent()) {
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), "1st").isPresent()) {
                         contractRepository.save(contract);
                     }
                 }
@@ -98,7 +124,7 @@ public class ReadCSVFileService {
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 8).toString()));
                     contract.setDegree("2st");
-                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_Code(contract.getErasmusCode(), contractsCoordinator.getCode()).isPresent()) {
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), "2st").isPresent()) {
                         contractRepository.save(contract);
                     }
                 }
@@ -114,7 +140,7 @@ public class ReadCSVFileService {
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 9).toString()));
                     contract.setDegree("3st");
-                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_Code(contract.getErasmusCode(), contractsCoordinator.getCode()).isPresent()) {
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), "3st").isPresent()) {
                         contractRepository.save(contract);
                     }
                 }
@@ -123,15 +149,15 @@ public class ReadCSVFileService {
         }
     }
 
-    public void saveRegistrationsToDatabase(String fileName) {
+    public void saveRegistrationsToDatabase(File file, String year) {
         List<String[]> r = null;
-        try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
             r = reader.readAll();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Edition edition = editionRepository.findByYear("2021").get();
+        Edition edition = editionRepository.findByYear(year).get();
 
         int listIndex = 0;
         for (String[] arrays : r) {
@@ -151,7 +177,8 @@ public class ReadCSVFileService {
                 registration.setPriority(Integer.parseInt(Array.get(arrays, 21).toString()));
                 ContractsCoordinator contractsCoordinator = contractCoordinatorRepository.findByName(Array.get(arrays, 15).toString()).get();
                 String erasmusCode = Array.get(arrays, 17).toString();
-                Contract contract = contractRepository.findByErasmusCodeAndContractsCoordinator_Code(erasmusCode, contractsCoordinator.getCode()).get();
+                String degree = Array.get(arrays, 19).toString() + "st";
+                Contract contract = contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(erasmusCode, contractsCoordinator.getCode(), edition, degree).get();
                 registration.setContract(contract);
                 registrationRepository.save(registration);
             }
