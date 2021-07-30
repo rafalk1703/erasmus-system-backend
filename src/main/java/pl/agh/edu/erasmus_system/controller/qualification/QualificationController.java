@@ -45,12 +45,15 @@ public class QualificationController {
                 registrationResponseBody.add(new QualificationRegistrationResponseBody(registration));
             }
 
+            long acceptedStudentsAmount = registrationRepository.countAcceptedStudentsByContract(contract);
+
             QualificationSingleResponseBody single = new QualificationSingleResponseBody(
                     contract.getId(),
                     coordinatorResponseBody,
                     contract.getErasmusCode(),
                     contract.getVacancies(),
-                    registrationResponseBody);
+                    registrationResponseBody,
+                    acceptedStudentsAmount);
             response.add(single);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);

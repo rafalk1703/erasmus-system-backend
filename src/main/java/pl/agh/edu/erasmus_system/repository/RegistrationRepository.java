@@ -22,4 +22,13 @@ public interface RegistrationRepository extends CrudRepository<Registration, Lon
   
     List<Registration> findByContract(Contract contract);
 
+    /**
+     * Returns amount of accepted students for given contract
+     * @param contract Contract object
+     * @return amount of accepted students for given contract
+     */
+    @Query("select count(r) from Registrations r " +
+            "left join Contracts c on r.contract = c " +
+            "where (c = ?1 and r.isAccepted=true)")
+    long countAcceptedStudentsByContract(Contract contract);
 }

@@ -16,4 +16,5 @@ public class QualificationSingleResponseBody {
     private String erasmusCode;
     private Integer vacancies;
     private List<QualificationRegistrationResponseBody> registrations;
+    private Long acceptedStudentsAmount;
 }
