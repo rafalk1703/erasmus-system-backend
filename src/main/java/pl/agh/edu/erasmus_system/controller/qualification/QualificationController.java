@@ -9,6 +9,7 @@ import pl.agh.edu.erasmus_system.model.Contract;
 import pl.agh.edu.erasmus_system.model.Registration;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
 import pl.agh.edu.erasmus_system.repository.RegistrationRepository;
+import pl.agh.edu.erasmus_system.service.QualificationService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,9 @@ import java.util.List;
 @RequestMapping("api/")
 @CrossOrigin
 public class QualificationController {
+
+    @Autowired
+    private QualificationService qualificationService;
 
     @Autowired
     private ContractRepository contractRepository;
@@ -45,7 +49,7 @@ public class QualificationController {
                 registrationResponseBody.add(new QualificationRegistrationResponseBody(registration));
             }
 
-            long acceptedStudentsAmount = registrationRepository.countAcceptedStudentsByContract(contract);
+            long acceptedStudentsAmount = qualificationService.countAcceptedStudentsByContract(contract);
 
             QualificationSingleResponseBody single = new QualificationSingleResponseBody(
                     contract.getId(),
@@ -54,8 +58,11 @@ public class QualificationController {
                     contract.getVacancies(),
                     registrationResponseBody,
                     acceptedStudentsAmount);
-            response.add(single);
+            response.addContract(single);
         }
+
+        response.addStudentsRegistrations(qualificationService.determineStudentsRegistrations());
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
