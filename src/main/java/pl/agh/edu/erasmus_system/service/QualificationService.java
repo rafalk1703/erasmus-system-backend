@@ -2,6 +2,7 @@ package pl.agh.edu.erasmus_system.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.agh.edu.erasmus_system.controller.qualification.response_bodies.QualificationStudentRegistrationsResponseBody;
 import pl.agh.edu.erasmus_system.model.Contract;
 import pl.agh.edu.erasmus_system.model.Registration;
 import pl.agh.edu.erasmus_system.repository.RegistrationRepository;
@@ -18,15 +19,25 @@ public class QualificationService {
         return registrationRepository.countAcceptedStudentsByContract(contract);
     }
 
-    public Map<Long, ArrayList<Long>> determineStudentsRegistrations() {
-        Map<Long, ArrayList<Long>> studentsRegistrations = new HashMap<>();
+    public Map<Long,QualificationStudentRegistrationsResponseBody> determineStudentsRegistrations() {
+        Map<Long,QualificationStudentRegistrationsResponseBody> studentsRegistrations = new HashMap<>();
 
         for (Registration registration : registrationRepository.findAll()) {
-            Long studentId = registration.getStudent().getId();
+            long studentId = registration.getStudent().getId();
             if (!studentsRegistrations.containsKey(studentId)) {
-                studentsRegistrations.put(studentId, new ArrayList<>(Arrays.asList(registration.getId())));
+                QualificationStudentRegistrationsResponseBody qualificationStudentRegistrationsResponseBody =
+                        new QualificationStudentRegistrationsResponseBody();
+                qualificationStudentRegistrationsResponseBody.addRegistrationId(registration.getId());
+                if (registration.getIsAccepted()) {
+                    qualificationStudentRegistrationsResponseBody.increaseAcceptedAmount();
+                }
+                studentsRegistrations.put(studentId, qualificationStudentRegistrationsResponseBody);
             } else {
-                studentsRegistrations.get(studentId).add(registration.getId());
+                QualificationStudentRegistrationsResponseBody studentRegistrations = studentsRegistrations.get(studentId);
+                studentRegistrations.addRegistrationId(registration.getId());
+                if (registration.getIsAccepted()) {
+                    studentRegistrations.increaseAcceptedAmount();
+                }
             }
         }
 

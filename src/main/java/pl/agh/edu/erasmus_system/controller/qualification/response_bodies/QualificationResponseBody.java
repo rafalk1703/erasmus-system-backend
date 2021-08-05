@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class QualificationResponseBody {
     private List<QualificationSingleResponseBody> contracts;
-    private Map<Long, ArrayList<Long>> studentsRegistrations;
+    private Map<Long,QualificationStudentRegistrationsResponseBody> studentsRegistrations;
 
     public QualificationResponseBody() {
         this.contracts = new ArrayList<>();
@@ -18,7 +18,7 @@ public class QualificationResponseBody {
         this.contracts.add(contract);
     }
 
-    public void addStudentsRegistrations(Map<Long, ArrayList<Long>> studentsRegistrations) {
+    public void setStudentsRegistrations(Map<Long,QualificationStudentRegistrationsResponseBody> studentsRegistrations) {
         this.studentsRegistrations = studentsRegistrations;
     }
 
@@ -26,7 +26,7 @@ public class QualificationResponseBody {
         return contracts;
     }
 
-    public Map<Long, ArrayList<Long>> getStudentsRegistrations() {
+    public Map<Long,QualificationStudentRegistrationsResponseBody> getStudentsRegistrations() {
         return studentsRegistrations;
     }
 }

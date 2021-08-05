@@ -61,7 +61,7 @@ public class QualificationController {
             response.addContract(single);
         }
 
-        response.addStudentsRegistrations(qualificationService.determineStudentsRegistrations());
+        response.setStudentsRegistrations(qualificationService.determineStudentsRegistrations());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
