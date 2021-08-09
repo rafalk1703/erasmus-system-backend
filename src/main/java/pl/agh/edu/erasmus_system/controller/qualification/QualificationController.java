@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.agh.edu.erasmus_system.controller.qualification.request_body.QualificationSaveRequestBody;
 import pl.agh.edu.erasmus_system.controller.qualification.response_bodies.*;
 import pl.agh.edu.erasmus_system.model.Contract;
 import pl.agh.edu.erasmus_system.model.Registration;
@@ -18,7 +19,7 @@ import java.util.List;
  * Class contains endpoints for qualification view
  */
 @RestController
-@RequestMapping("api/")
+@RequestMapping("api/qualification")
 @CrossOrigin
 public class QualificationController {
 
@@ -36,7 +37,7 @@ public class QualificationController {
      *
      * @return OK(200) with contracts details in response body
      */
-    @RequestMapping(value = "/qualificationView", method = RequestMethod.GET)
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
     public ResponseEntity<QualificationResponseBody> getContracts() {
         QualificationResponseBody response = new QualificationResponseBody();
         List<Contract> contracts = contractRepository.findAll();
@@ -64,5 +65,18 @@ public class QualificationController {
         response.setStudentsRegistrations(qualificationService.determineStudentsRegistrations());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public ResponseEntity saveQualification(@RequestBody QualificationSaveRequestBody requestBody) {
+
+        requestBody.getRegistrations().forEach(
+               registration -> {
+                    Registration registrationToUpdate = registrationRepository.findById(registration.getRegistrationId()).get();
+                    registrationToUpdate.setIsAccepted(registration.getAcceptanceStatus());
+                    registrationRepository.save(registrationToUpdate);
+               }
+        );
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
