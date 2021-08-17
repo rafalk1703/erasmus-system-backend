@@ -63,8 +63,8 @@ public class EditionController {
     }
 
     @RequestMapping(value = "/active", method = RequestMethod.GET)
-    public List<Edition> getActiveEditions() {
-        return editionRepository.findByIsActiveIsTrue();
+    public Edition getActiveEditions() {
+        return editionRepository.findByIsActiveIsTrue().get(0);
     }
 
 
@@ -134,11 +134,13 @@ public class EditionController {
     }
 
     @RequestMapping(value = "/add/{edition_year}", method= RequestMethod.POST)
-    public @ResponseBody String addNewEdition(@PathVariable("edition_year") String editionYear,
+    public ResponseEntity<String> addNewEdition(@PathVariable("edition_year") String editionYear,
                                               @RequestParam("coordinators_file") MultipartFile coordinatorsFile,
                                               @RequestParam("contracts_file") MultipartFile contractsFile,
                                               @RequestParam("registrations_file") MultipartFile registrationsFile
                                               ) throws IOException {
+        if (!editionRepository.findByIsActiveIsTrue().isEmpty())
+            return new ResponseEntity<>("Only one edition can be active", HttpStatus.NOT_ACCEPTABLE);
         System.out.println("dzialaEndpoint");
         System.out.println(coordinatorsFile.getName());
         File coordinatorsConvertedFile = FileUtils.convert(coordinatorsFile);
@@ -153,15 +155,15 @@ public class EditionController {
                 contractsConvertedFile.delete();
                 registrationsConvertedFile.delete();
 
-                return "";
+                return new ResponseEntity<>(HttpStatus.OK);
 
             } catch (Exception e) {
 
-                return "You failed to upload " + " => " + e.getMessage();
+                return new ResponseEntity<>("You failed to upload " + " => " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
             }
         } else {
 
-            return "You failed to upload " + " because the file was empty.";
+            return new ResponseEntity<>("You failed to upload " + " because the file was empty.", HttpStatus.NOT_ACCEPTABLE);
         }
     }
 

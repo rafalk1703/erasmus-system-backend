@@ -24,6 +24,16 @@ public class ContractCoordinatorController {
     @Autowired
     private ContractRepository contractRepository;
 
+    @RequestMapping(value = "/delete/all", method = RequestMethod.GET)
+    public ResponseEntity deleteAllContractCoordinators() {
+        List<ContractsCoordinator> contractsCoordinators = contractCoordinatorRepository.findAll();
+        for (var contractCoordinator : contractsCoordinators) {
+            contractCoordinatorRepository.delete(contractCoordinator);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/allContractCoordinatorsView", method = RequestMethod.GET)
     public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinators() {
 

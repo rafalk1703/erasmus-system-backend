@@ -108,7 +108,7 @@ public class ReadCSVFileService {
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 7).toString()));
                     contract.setDegree("1st");
-                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), "1st").isPresent()) {
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), edition, "1st").isPresent()) {
                         contractRepository.save(contract);
                     }
                 }
@@ -124,7 +124,7 @@ public class ReadCSVFileService {
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 8).toString()));
                     contract.setDegree("2st");
-                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), "2st").isPresent()) {
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), edition, "2st").isPresent()) {
                         contractRepository.save(contract);
                     }
                 }
@@ -140,7 +140,7 @@ public class ReadCSVFileService {
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 9).toString()));
                     contract.setDegree("3st");
-                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), "3st").isPresent()) {
+                    if (!contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), edition, "3st").isPresent()) {
                         contractRepository.save(contract);
                     }
                 }
