@@ -56,6 +56,7 @@ public class QualificationController {
                     contract.getId(),
                     coordinatorResponseBody,
                     contract.getErasmusCode(),
+                    contract.getDegree(),
                     contract.getVacancies(),
                     registrationResponseBody,
                     acceptedStudentsAmount);
