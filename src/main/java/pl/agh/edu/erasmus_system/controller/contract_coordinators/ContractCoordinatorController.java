@@ -42,10 +42,10 @@ public class ContractCoordinatorController {
         return getContractCoordinatorResponseEntity(contractsCoordinators);
     }
 
-    @RequestMapping(value = "/allContractCoordinatorsView/{edition}", method = RequestMethod.GET)
-    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinatorsByEdition(@PathVariable("edition") String edition) {
+    @RequestMapping(value = "/allContractCoordinatorsView/{edition_id}", method = RequestMethod.GET)
+    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinatorsByEdition(@PathVariable("edition_id") long editionId) {
 
-        List<Contract> contractsByEdition = contractRepository.findByEdition_Year(edition);
+        List<Contract> contractsByEdition = contractRepository.findByEdition_Id(editionId);
         Set<ContractsCoordinator> contractsCoordinators = new LinkedHashSet<>();
 
         for (Contract contract : contractsByEdition) {

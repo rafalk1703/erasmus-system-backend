@@ -21,6 +21,7 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
 
     Optional<Contract> findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(String erasmusCode, String contractCoordinatorCode, Edition edition, String degree);
 
+    List<Contract> findByEdition_Id(long editionId);
 
     List<Contract> findByEdition_Year(String editionYear);
 

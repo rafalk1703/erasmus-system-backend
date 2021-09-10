@@ -26,10 +26,10 @@ public class ContractController {
         return getContractResponseEntity(contracts);
     }
 
-    @RequestMapping(value = "/allContractsView/{edition}", method = RequestMethod.GET)
-    public ResponseEntity<ContractResponseBody> getAllContractsByEdition(@PathVariable("edition") String edition) {
+    @RequestMapping(value = "/allContractsView/{edition_id}", method = RequestMethod.GET)
+    public ResponseEntity<ContractResponseBody> getAllContractsByEdition(@PathVariable("edition_id") long editionId) {
 
-        List<Contract> contractsByEdition = contractRepository.findByEdition_Year(edition);
+        List<Contract> contractsByEdition = contractRepository.findByEdition_Id(editionId);
         return getContractResponseEntity(contractsByEdition);
     }
 

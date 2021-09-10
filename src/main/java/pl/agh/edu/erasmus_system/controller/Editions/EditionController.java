@@ -44,10 +44,10 @@ public class EditionController {
         return editionRepository.findAll();
     }
 
-    @RequestMapping(value = "/delete/{edition}", method = RequestMethod.GET)
-    public void deleteEdition(@PathVariable("edition") String edition) {
-        Edition editionToDelete = editionRepository.findByYear(edition).get();
-        List<Contract> contractsToDelete = contractRepository.findByEdition_Year(edition);
+    @RequestMapping(value = "/delete/{edition_id}", method = RequestMethod.GET)
+    public void deleteEdition(@PathVariable("edition_id") long editionId) {
+        Edition editionToDelete = editionRepository.findById(editionId).get();
+        List<Contract> contractsToDelete = contractRepository.findByEdition_Id(editionId);
         List<Registration> registrationsToDelete = new LinkedList<>();
 
         for (Contract contract : contractsToDelete)
@@ -68,17 +68,17 @@ public class EditionController {
     }
 
 
-    @RequestMapping(value = "/isActive/{edition_year}", method = RequestMethod.GET)
-    public Boolean checkIfIsActiveEdition(@PathVariable("edition_year") String editionYear) {
-        return editionRepository.findByYear(editionYear).get().getIsActive();
+    @RequestMapping(value = "/isActive/{edition_id}", method = RequestMethod.GET)
+    public Boolean checkIfIsActiveEdition(@PathVariable("edition_id") long editionId) {
+        return editionRepository.findById(editionId).get().getIsActive();
     }
 
-    @RequestMapping(value = "/statistics/{edition_year}", method = RequestMethod.GET)
-    public ResponseEntity<EditionStatisticsResponseBody> editionStatistics(@PathVariable("edition_year") String editionYear) {
+    @RequestMapping(value = "/statistics/{edition_id}", method = RequestMethod.GET)
+    public ResponseEntity<EditionStatisticsResponseBody> editionStatistics(@PathVariable("edition_id") long editionId) {
 
-        Edition edition = editionRepository.findByYear(editionYear).get();
-        Long id = edition.getId();
-        List<Contract> contracts = contractRepository.findByEdition_Year(editionYear);
+        Edition edition = editionRepository.findById(editionId).get();
+        String editionYear = edition.getYear();
+        List<Contract> contracts = contractRepository.findByEdition_Id(editionId);
         int numberOfRegistrations = 0;
         int numberOfContracts1Degree = 0;
         int numberOfContracts2Degree = 0;
@@ -108,7 +108,7 @@ public class EditionController {
 
         }
 
-        EditionStatisticsResponseBody response = new EditionStatisticsResponseBody(id, editionYear, contracts.size(), numberOfRegistrations, numberOfContracts1Degree,
+        EditionStatisticsResponseBody response = new EditionStatisticsResponseBody(editionId, editionYear, contracts.size(), numberOfRegistrations, numberOfContracts1Degree,
                 numberOfContracts2Degree, numberOfContracts3Degree, numberOfRegistrations1Degree, numberOfRegistrations2Degree,
                 numberOfRegistrations3Degree);
 
@@ -117,24 +117,24 @@ public class EditionController {
     }
 
 
-    @RequestMapping(value = "/deactivate/{edition}", method = RequestMethod.GET)
-    public ResponseEntity deactivateEdition(@PathVariable("edition") String edition) {
-        Edition deactivatedEdition = editionRepository.findByYear(edition).get();
+    @RequestMapping(value = "/deactivate/{edition_id}", method = RequestMethod.GET)
+    public ResponseEntity deactivateEdition(@PathVariable("edition_id") long editionId) {
+        Edition deactivatedEdition = editionRepository.findById(editionId).get();
         deactivatedEdition.setIsActive(false);
         editionRepository.save(deactivatedEdition);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/activate/{edition}", method = RequestMethod.GET)
-    public ResponseEntity activateEdition(@PathVariable("edition") String edition) {
-        Edition deactivatedEdition = editionRepository.findByYear(edition).get();
+    @RequestMapping(value = "/activate/{edition_id}", method = RequestMethod.GET)
+    public ResponseEntity activateEdition(@PathVariable("edition_id") long editionId) {
+        Edition deactivatedEdition = editionRepository.findById(editionId).get();
         deactivatedEdition.setIsActive(true);
         editionRepository.save(deactivatedEdition);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/add/{edition_year}", method= RequestMethod.POST)
-    public ResponseEntity<String> addNewEdition(@PathVariable("edition_year") String editionYear,
+    @RequestMapping(value = "/add", method= RequestMethod.POST)
+    public ResponseEntity<String> addNewEdition(@RequestParam("edition_year") String editionYear,
                                               @RequestParam("coordinators_file") MultipartFile coordinatorsFile,
                                               @RequestParam("contracts_file") MultipartFile contractsFile,
                                               @RequestParam("registrations_file") MultipartFile registrationsFile
