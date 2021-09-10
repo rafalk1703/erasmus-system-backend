@@ -1,30 +1,52 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="pl-PL">
 <head>
     <title>Students</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>;/
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
 </head>
-
 <body>
+<div>
+    <div><img width="180" height="70" class="logo" src="images/erasmus_logo.png"/></div>
+    <div id="first-text">Lista zasadnicza osób zakwalifikowanych do wyjazdu na studia za granicę w ramach programu Erasmus+ w roku akademickim th:text="${student?.year}"</div>
+</div>
 <!--<img class="logo" src="images/logo.png"/>-->
 
 <!-- Students Table -->
 <div id="students">
     <div th:if="${not #lists.isEmpty(students)}">
-        <table class="students_table paginate-table">
+        <table class="table table-bordered">
             <thead>
             <tr>
+                <th>Lp.</th>
                 <th>Imię</th>
                 <th>Nazwisko</th>
-                <th>Rok</th>
-                <th>Kierunek</th>
+                <th>Nazwa Wydziału</th>
+                <th>Rok studiów(stopień studiów)</th>
+                <th>Uczelnia Partnerska (Erasmus kod uczelni)</th>
+                <th>Okres pobytu liczba miesięcy</th>
+                <th>Adres e-mail studenta</th>
+                <th>Telefon kontaktowy do studenta</th>
+                <th>Wcześniejszy udział w Programie Erasmus+ TAK/NIE (studia/praktyki)</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="student : ${students}">
+            <tr th:each="student, iter : ${students}">
+                <td th:text="${iter.index}"></td>
+                <td th:text="${student?.name}"></td>
                 <td th:text="${student?.name}"></td>
                 <td th:text="${student?.surname}"></td>
                 <td th:text="${student?.year}"></td>
+                <td th:text="${student?.field}"></td>
+                <td th:text="${student?.field}"></td>
+                <td th:text="${student?.field}"></td>
+                <td th:text="${student?.field}"></td>
                 <td th:text="${student?.field}"></td>
             </tr>
             </tbody>

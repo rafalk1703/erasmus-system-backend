@@ -1,6 +1,6 @@
 package pl.agh.edu.erasmus_system.controller;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,13 +27,14 @@ public class GeneratePdfFileController {
         try {
             Path file = Paths.get(generatePdfFileService.generatePdf().getAbsolutePath());
             if (Files.exists(file)) {
+                response.setCharacterEncoding("UTF-8");
                 response.setContentType("application/pdf");
                 response.addHeader("Content-Disposition",
                         "attachment; filename=" + "Lista_wydzialowa_WIEiT");
                 Files.copy(file, response.getOutputStream());
                 response.getOutputStream().flush();
             }
-        } catch (DocumentException | IOException ex) {
+        } catch (IOException | DocumentException ex) {
             ex.printStackTrace();
         }
     }

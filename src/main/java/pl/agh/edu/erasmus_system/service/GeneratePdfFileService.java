@@ -1,8 +1,8 @@
 package pl.agh.edu.erasmus_system.service;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.BaseFont;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -34,14 +34,16 @@ public class GeneratePdfFileService {
         Context context = getContext();
         String html = loadAndFillTemplate(context);
         return renderPdf(html);
+
     }
 
 
-    private File renderPdf(String html) throws IOException, DocumentException {
+    private File renderPdf(String html) throws IOException, DocumentException, DocumentException, DocumentException, DocumentException {
         File file = File.createTempFile("students", ".pdf");
         OutputStream outputStream = new FileOutputStream(file);
-        ITextRenderer renderer = new ITextRenderer(20f * 4f / 3f, 20);
-        renderer.setDocumentFromString(html, new ClassPathResource(PDF_RESOURCES).getURL().toExternalForm());
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.getFontResolver().addFont("fonts/arial.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        renderer.setDocumentFromString(html);
         renderer.layout();
         renderer.createPDF(outputStream);
         outputStream.close();
