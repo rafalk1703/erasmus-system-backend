@@ -19,8 +19,8 @@
     <dependencies>
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>
-            <artifactId>flying-saucer-fop</artifactId>
-            <version>9.1.22</version>
+            <artifactId>flying-saucer-pdf</artifactId>
+            <version>9.1.20</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf -->
         <dependency>

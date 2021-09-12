@@ -2,22 +2,46 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pl-PL">
 <head>
     <title>Students</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>;/
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
     <style>
-        * {
-            font-family: Arial, Helvetica, sans-serif;
+        #title-text {
+            text-align: center;
         }
+
+        #container {
+            width: 100%;
+            text-align: center;
+        }
+
+        #left {
+            float: left;
+            width: auto;
+        }
+
+        #right {
+            float: right;
+            width: auto;
+        }
+
     </style>
+
 </head>
 <body>
 <div>
-    <div><img width="180" height="70" class="logo" src="images/erasmus_logo.png"/></div>
-    <div id="first-text">Lista zasadnicza osób zakwalifikowanych do wyjazdu na studia za granicę w ramach programu Erasmus+ w roku akademickim th:text="${student?.year}"</div>
-</div>
-<!--<img class="logo" src="images/logo.png"/>-->
+    <span><img width="180" height="70" class="logo" src="images/erasmus_logo.png"/></span>
+    <div id="title-text">Lista zasadnicza osób <u>zakwalifikowanych</u> <b>do wyjazdu na studia</b> <br></br>
+        za granicę w ramach programu Erasmus+ <br></br>
+        w roku akademickim<textarea th:text="${students.get(0).year}"></textarea></div>
 
+</div>
+<br></br>
+<div>Wymienieni niżej studenci <b>z Wydziału Informatyki, Elektroniki i Telekomunikacji (WIEiT)</b><br></br>
+    AGH zostali zaakceptowani na studia (miejsca z umów WIEiT):
+</div>
+<br></br>
 <!-- Students Table -->
 <div id="students">
     <div th:if="${not #lists.isEmpty(students)}">
@@ -28,12 +52,12 @@
                 <th>Imię</th>
                 <th>Nazwisko</th>
                 <th>Nazwa Wydziału</th>
-                <th>Rok studiów(stopień studiów)</th>
-                <th>Uczelnia Partnerska (Erasmus kod uczelni)</th>
-                <th>Okres pobytu liczba miesięcy</th>
+                <th>Rok studiów<br></br>(stopień studiów)</th>
+                <th>Uczelnia Partnerska<br></br>(Erasmus kod uczelni)</th>
+                <th>Okres pobytu<br></br>liczba miesięcy</th>
                 <th>Adres e-mail studenta</th>
                 <th>Telefon kontaktowy do studenta</th>
-                <th>Wcześniejszy udział w Programie Erasmus+ TAK/NIE (studia/praktyki)</th>
+                <th>Wcześniejszy udział w <br></br>Programie Erasmus+ TAK/NIE</th>
             </tr>
             </thead>
             <tbody>
@@ -53,6 +77,11 @@
         </table>
     </div>
 </div>
-
+<br></br>
+<br></br>
+<div id="container">
+    <div id="left">Koordynator Wydziałowy ( podpis, pieczątka lub czytelne nazwisko )</div>
+    <div id="right">Dziekan Wydziału ( podpis, pieczątka lub czytelne nazwisko )</div>
+</div>
 </body>
 </html>
