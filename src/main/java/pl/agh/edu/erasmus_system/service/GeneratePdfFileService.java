@@ -59,7 +59,8 @@ public class GeneratePdfFileService {
         Context context = new Context();
         List<Registration> acceptedRegistrations = registrationRepository.findAllByIsAcceptedIsTrue();
         Map<Student, String> acceptedStudents = acceptedRegistrations.stream()
-                .collect(Collectors.toMap(Registration::getStudent, registration -> registration.getContract().getErasmusCode()));
+                .collect(Collectors.toMap(Registration::getStudent, registration -> registration.getContract().getErasmusCode() +
+                        " (" +registration.getContract().getContractsCoordinator().getCode() + ")"));
         context.setVariable("students", acceptedStudents);
         return context;
     }
