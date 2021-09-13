@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.xhtmlrenderer.pdf.ITextRenderer;
+import pl.agh.edu.erasmus_system.model.Registration;
+import pl.agh.edu.erasmus_system.model.Student;
 import pl.agh.edu.erasmus_system.repository.RegistrationRepository;
 import pl.agh.edu.erasmus_system.repository.StudentRepository;
 
@@ -15,6 +17,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class GeneratePdfFileService {
@@ -52,7 +57,10 @@ public class GeneratePdfFileService {
 
     private Context getContext() {
         Context context = new Context();
-        context.setVariable("students", studentRepository.findAll());
+        List<Registration> acceptedRegistrations = registrationRepository.findAllByIsAcceptedIsTrue();
+        Map<Student, String> acceptedStudents = acceptedRegistrations.stream()
+                .collect(Collectors.toMap(Registration::getStudent, registration -> registration.getContract().getErasmusCode()));
+        context.setVariable("students", acceptedStudents);
         return context;
     }
 

@@ -63,15 +63,15 @@
             <tbody>
             <tr th:each="student, iter : ${students}">
                 <td th:text="${iter.index}"></td>
-                <td th:text="${student?.name}"></td>
-                <td th:text="${student?.name}"></td>
-                <td th:text="${student?.surname}"></td>
-                <td th:text="${student?.year}"></td>
-                <td th:text="${student?.field}"></td>
-                <td th:text="${student?.field}"></td>
-                <td th:text="${student?.field}"></td>
-                <td th:text="${student?.field}"></td>
-                <td th:text="${student?.field}"></td>
+                <td th:text="${student?.getKey().name}"></td>
+                <td th:text="${student?.getKey().surname}"></td>
+                <td th:text="${student?.getKey().department}"></td>
+                <td th:text="${student?.getKey().year}"></td>
+                <td th:text="${student?.getValue()}"></td>
+                <td th:text="${student?.getKey().periodOfStay}"></td>
+                <td th:text="${student?.getKey().email}"></td>
+                <td th:text="${student?.getKey().phoneNumber}"></td>
+                <td th:text="${student?.getKey().earlierParticipation}"></td>
             </tr>
             </tbody>
         </table>

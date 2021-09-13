@@ -36,4 +36,13 @@ public class Student {
 
     @Column(nullable = false)
     private String field;
+
+    @Column(nullable = false)
+    private String phoneNumber;
+
+    @Column(nullable = false)
+    private String periodOfStay;
+
+    @Column(nullable = false)
+    private boolean earlierParticipation;
 }

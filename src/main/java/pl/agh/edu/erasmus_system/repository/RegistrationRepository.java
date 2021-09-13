@@ -5,6 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import pl.agh.edu.erasmus_system.model.Contract;
 import pl.agh.edu.erasmus_system.model.Registration;
+import pl.agh.edu.erasmus_system.model.Student;
 
 import java.util.List;
 
@@ -32,4 +33,6 @@ public interface RegistrationRepository extends CrudRepository<Registration, Lon
             "left join Contracts c on r.contract = c " +
             "where (c = ?1 and r.isAccepted=true)")
     long countAcceptedStudentsByContract(Contract contract);
+
+    List<Registration> findAllByIsAcceptedIsTrue();
 }
