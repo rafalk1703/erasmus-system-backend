@@ -11,7 +11,6 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import pl.agh.edu.erasmus_system.model.Registration;
 import pl.agh.edu.erasmus_system.model.Student;
 import pl.agh.edu.erasmus_system.repository.RegistrationRepository;
-import pl.agh.edu.erasmus_system.repository.StudentRepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,14 +29,11 @@ public class GeneratePdfFileService {
     private RegistrationRepository registrationRepository;
 
     @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
     private SpringTemplateEngine templateEngine;
 
 
-    public File generatePdf() throws IOException, DocumentException {
-        Context context = getContext();
+    public File generatePdf(long editionId) throws IOException, DocumentException {
+        Context context = getContext(editionId);
         String html = loadAndFillTemplate(context);
         return renderPdf(html);
     }
@@ -55,9 +51,9 @@ public class GeneratePdfFileService {
         return file;
     }
 
-    private Context getContext() {
+    private Context getContext(long editionId) {
         Context context = new Context();
-        List<Registration> acceptedRegistrations = registrationRepository.findAllByIsAcceptedIsTrue();
+        List<Registration> acceptedRegistrations = registrationRepository.findAllByIsAcceptedIsTrueAndContract_Edition_Id(editionId);
         Map<Student, String> acceptedStudents = acceptedRegistrations.stream()
                 .collect(Collectors.toMap(Registration::getStudent, registration -> registration.getContract().getErasmusCode() +
                         " (" +registration.getContract().getContractsCoordinator().getCode() + ")"));

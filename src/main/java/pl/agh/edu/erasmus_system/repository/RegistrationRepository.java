@@ -35,4 +35,6 @@ public interface RegistrationRepository extends CrudRepository<Registration, Lon
     long countAcceptedStudentsByContract(Contract contract);
 
     List<Registration> findAllByIsAcceptedIsTrue();
+
+    List<Registration> findAllByIsAcceptedIsTrueAndContract_Edition_Id(long editionId);
 }

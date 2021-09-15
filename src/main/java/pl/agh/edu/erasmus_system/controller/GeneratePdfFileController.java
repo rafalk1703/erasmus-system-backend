@@ -2,10 +2,7 @@ package pl.agh.edu.erasmus_system.controller;
 
 import com.lowagie.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.agh.edu.erasmus_system.service.GeneratePdfFileService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,10 +19,10 @@ public class GeneratePdfFileController {
     @Autowired
     private GeneratePdfFileService generatePdfFileService;
 
-    @RequestMapping(value="/generate", method= RequestMethod.GET)
-    public void downloadPDFResource(HttpServletResponse response) {
+    @RequestMapping(value="/generate/{edition_id}", method= RequestMethod.GET)
+    public void downloadPDFResource(HttpServletResponse response, @PathVariable("edition_id") long editionId) {
         try {
-            Path file = Paths.get(generatePdfFileService.generatePdf().getAbsolutePath());
+            Path file = Paths.get(generatePdfFileService.generatePdf(editionId).getAbsolutePath());
             if (Files.exists(file)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("application/pdf");
