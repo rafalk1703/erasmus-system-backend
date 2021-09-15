@@ -2,7 +2,9 @@ package pl.agh.edu.erasmus_system.service;
 
 import com.opencsv.CSVReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import pl.agh.edu.erasmus_system.Utils.PasswordManagement;
 import pl.agh.edu.erasmus_system.model.*;
 import pl.agh.edu.erasmus_system.repository.*;
 
@@ -30,7 +32,8 @@ public class ReadCSVFileService {
     @Autowired
     private EditionRepository editionRepository;
 
-
+    @Value("${application.domain}")
+    public String domainName;
 
     public void saveCoordinatorsToDatabase(String fileName) {
         List<String[]> r = null;
@@ -66,15 +69,32 @@ public class ReadCSVFileService {
         int listIndex = 0;
         for (String[] arrays : r) {
             if (listIndex++ > 0) {
-                ContractsCoordinator contractsCoordinator = new ContractsCoordinator();
-                contractsCoordinator.setName(Array.get(arrays, 0).toString());
-                System.out.println(Array.get(arrays, 0).toString());
-                contractsCoordinator.setCode(Array.get(arrays, 1).toString());
-                if (!contractCoordinatorRepository.findByName(Array.get(arrays, 0).toString()).isPresent()) {
+                if (contractCoordinatorRepository.findByName(Array.get(arrays, 0).toString()).isEmpty()) {
+                    ContractsCoordinator contractsCoordinator = new ContractsCoordinator();
+                    contractsCoordinator.setName(Array.get(arrays, 0).toString());
+                    contractsCoordinator.setCode(Array.get(arrays, 1).toString());
+                    //TODO Set coordinator email
+
+                    String password = PasswordManagement.generatePassword();
+                    contractsCoordinator.setHash(PasswordManagement.generateHash(password));
+
                     contractCoordinatorRepository.save(contractsCoordinator);
+
+                    EmailSender sender = EmailSender.getSender();
+                    String emailMessage = new StringBuilder()
+                            .append("Witamy w Erasmus System! ")
+                            .append(domainName)
+                            .append("/login?email=")
+                            .append("email") //TODO Add email variable
+                            .append(System.lineSeparator())
+                            .append("Zostało utworzone Twoje konto")
+                            .append(System.lineSeparator())
+                            .append("Oto Twoje hasło do systemu: ")
+                            .append(password)
+                            .toString();
+                    sender.sendEmailTo("dkulma@student.agh.edu.pl", "Hasło do Erasmus System", emailMessage); //TODO Change email-to
                 }
             }
-
         }
     }
 
