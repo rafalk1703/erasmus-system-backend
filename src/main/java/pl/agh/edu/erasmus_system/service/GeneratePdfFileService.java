@@ -53,7 +53,8 @@ public class GeneratePdfFileService {
 
     private Context getContext(long editionId) {
         Context context = new Context();
-        List<Registration> acceptedRegistrations = registrationRepository.findAllByIsAcceptedIsTrueAndContract_Edition_Id(editionId);
+        List<Registration> acceptedRegistrations = registrationRepository.findAllByContract_Edition_IdAndIsAccepted(editionId);
+        System.out.println(acceptedRegistrations.size());
         Map<Student, String> acceptedStudents = acceptedRegistrations.stream()
                 .collect(Collectors.toMap(Registration::getStudent, registration -> registration.getContract().getErasmusCode() +
                         " (" +registration.getContract().getContractsCoordinator().getCode() + ")"));

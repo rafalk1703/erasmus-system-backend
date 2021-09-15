@@ -34,7 +34,9 @@ public interface RegistrationRepository extends CrudRepository<Registration, Lon
             "where (c = ?1 and r.isAccepted=true)")
     long countAcceptedStudentsByContract(Contract contract);
 
-    List<Registration> findAllByIsAcceptedIsTrue();
 
-    List<Registration> findAllByIsAcceptedIsTrueAndContract_Edition_Id(long editionId);
+    @Query("select r from Registrations r " +
+            "left join Contracts c on r.contract = c " +
+            "where c.edition.id = ?1 and r.isAccepted=true")
+    List<Registration> findAllByContract_Edition_IdAndIsAccepted(long editionId);
 }

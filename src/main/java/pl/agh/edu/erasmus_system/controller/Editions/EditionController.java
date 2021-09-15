@@ -64,6 +64,8 @@ public class EditionController {
 
     @RequestMapping(value = "/active", method = RequestMethod.GET)
     public Edition getActiveEditions() {
+        if (editionRepository.findByIsActiveIsTrue().size() == 0)
+            return null;
         return editionRepository.findByIsActiveIsTrue().get(0);
     }
 

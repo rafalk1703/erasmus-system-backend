@@ -44,5 +44,5 @@ public class Student {
     private String periodOfStay;
 
     @Column(nullable = false)
-    private boolean earlierParticipation;
+    private String earlierParticipation;
 }
