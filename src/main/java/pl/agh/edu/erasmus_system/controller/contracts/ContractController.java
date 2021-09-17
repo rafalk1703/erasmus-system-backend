@@ -33,10 +33,10 @@ public class ContractController {
         return getContractResponseEntity(contractsByEdition);
     }
 
-    @RequestMapping(value = "/allContractsView/{edition}/{coordinator_code}", method = RequestMethod.GET)
-    public ResponseEntity<ContractResponseBody> getAllContractsByEditionAndCoordinator(@PathVariable("edition") String edition, @PathVariable("coordinator_code") String coordinatorCode) {
+    @RequestMapping(value = "/allContractsView/{edition_id}/{coordinator_code}", method = RequestMethod.GET)
+    public ResponseEntity<ContractResponseBody> getAllContractsByEditionAndCoordinator(@PathVariable("edition_id") long editionId, @PathVariable("coordinator_code") String coordinatorCode) {
 
-        List<Contract> contractsByEditionAndCoordinator = contractRepository.findByEdition_YearAndContractsCoordinator_Code(edition, coordinatorCode);
+        List<Contract> contractsByEditionAndCoordinator = contractRepository.findByEdition_IdAndContractsCoordinator_Code(editionId, coordinatorCode);
         return getContractResponseEntity(contractsByEditionAndCoordinator);
     }
 
