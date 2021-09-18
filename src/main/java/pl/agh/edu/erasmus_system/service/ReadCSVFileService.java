@@ -163,17 +163,22 @@ public class ReadCSVFileService {
         for (String[] arrays : r) {
             if (listIndex++ > 0) {
                 Registration registration = new Registration();
-                Student student = new Student();
-                student.setName(Array.get(arrays, 4).toString());
-                student.setSurname(Array.get(arrays, 5).toString());
-                student.setDepartment(Array.get(arrays, 3).toString());
-                student.setEmail(Array.get(arrays, 7).toString());
-                student.setYear(Array.get(arrays, 2).toString());
-                student.setField(Array.get(arrays, 22).toString());
-                student.setPhoneNumber(Array.get(arrays, 23).toString());
-                student.setEarlierParticipation(Array.get(arrays, 24).toString());
-                student.setPeriodOfStay(Array.get(arrays, 20).toString());
-                studentRepository.save(student);
+                Student student = null;
+                if (studentRepository.findStudentByEditionAndEmail(edition.getId(), Array.get(arrays, 7).toString()).isEmpty()) {
+                    student = new Student();
+                    student.setName(Array.get(arrays, 4).toString());
+                    student.setSurname(Array.get(arrays, 5).toString());
+                    student.setDepartment(Array.get(arrays, 3).toString());
+                    student.setEmail(Array.get(arrays, 7).toString());
+                    student.setYear(Array.get(arrays, 2).toString());
+                    student.setField(Array.get(arrays, 22).toString());
+                    student.setPhoneNumber(Array.get(arrays, 23).toString());
+                    student.setEarlierParticipation(Array.get(arrays, 24).toString());
+                    student.setPeriodOfStay(Array.get(arrays, 20).toString());
+                    studentRepository.save(student);
+                } else {
+                    student = studentRepository.findStudentByEditionAndEmail(edition.getId(), Array.get(arrays, 7).toString()).get();
+                }
                 registration.setIsNominated(false);
                 registration.setIsAccepted(false);
                 registration.setStudent(student);
