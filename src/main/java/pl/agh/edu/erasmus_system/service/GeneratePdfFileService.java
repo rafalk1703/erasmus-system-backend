@@ -34,7 +34,13 @@ public class GeneratePdfFileService {
 
     public File generatePdf(long editionId) throws IOException, DocumentException {
         Context context = getContext(editionId);
-        String html = loadAndFillTemplate(context);
+        String html = templateEngine.process("result_pdf_file", context);
+        return renderPdf(html);
+    }
+
+    public File generatePdfWIEIT(long editionId) throws IOException, DocumentException {
+        Context context = getContextWIEIT(editionId);
+        String html = templateEngine.process("result_pdf_file_wieit", context);
         return renderPdf(html);
     }
 
@@ -53,7 +59,10 @@ public class GeneratePdfFileService {
 
     private Context getContext(long editionId) {
         Context context = new Context();
-        List<Registration> acceptedRegistrations = registrationRepository.findAllByContract_Edition_IdAndIsAccepted(editionId);
+        List<Registration> acceptedRegistrations = registrationRepository
+                .findAllByContract_Edition_IdAndIsAccepted(editionId)
+                .stream().filter(registration -> !registration.getStudent().getDepartment().equals("WIEIT"))
+                .collect(Collectors.toList());
         System.out.println(acceptedRegistrations.size());
         Map<Student, String> acceptedStudents = acceptedRegistrations.stream()
                 .collect(Collectors.toMap(Registration::getStudent, registration -> registration.getContract().getErasmusCode() +
@@ -62,8 +71,17 @@ public class GeneratePdfFileService {
         return context;
     }
 
-    private String loadAndFillTemplate(Context context) {
-        return templateEngine.process("result_pdf_file", context);
+    private Context getContextWIEIT(long editionId) {
+        Context context = new Context();
+        List<Registration> acceptedRegistrations = registrationRepository
+                .findAllByContract_Edition_IdAndIsAccepted(editionId)
+                .stream().filter(registration -> registration.getStudent().getDepartment().toUpperCase().equals("WIEIT"))
+                .collect(Collectors.toList());
+        System.out.println(acceptedRegistrations.size());
+        Map<Student, String> acceptedStudents = acceptedRegistrations.stream()
+                .collect(Collectors.toMap(Registration::getStudent, registration -> registration.getContract().getErasmusCode() +
+                        " (" +registration.getContract().getContractsCoordinator().getCode() + ")"));
+        context.setVariable("students", acceptedStudents);
+        return context;
     }
-
 }

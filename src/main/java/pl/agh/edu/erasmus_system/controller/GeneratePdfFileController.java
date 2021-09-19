@@ -20,9 +20,26 @@ public class GeneratePdfFileController {
     private GeneratePdfFileService generatePdfFileService;
 
     @RequestMapping(value="/generate/{edition_id}", method= RequestMethod.GET)
-    public void downloadPDFResource(HttpServletResponse response, @PathVariable("edition_id") long editionId) {
+    public void downloadPDF(HttpServletResponse response, @PathVariable("edition_id") long editionId) {
         try {
             Path file = Paths.get(generatePdfFileService.generatePdf(editionId).getAbsolutePath());
+            if (Files.exists(file)) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/pdf");
+                response.addHeader("Content-Disposition",
+                        "attachment; filename=" + "Lista_wydzialowa_spoza_WIEiT");
+                Files.copy(file, response.getOutputStream());
+                response.getOutputStream().flush();
+            }
+        } catch (IOException | DocumentException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value="/generate/WIEIT/{edition_id}", method= RequestMethod.GET)
+    public void downloadPDFWIEIT(HttpServletResponse response, @PathVariable("edition_id") long editionId) {
+        try {
+            Path file = Paths.get(generatePdfFileService.generatePdfWIEIT(editionId).getAbsolutePath());
             if (Files.exists(file)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("application/pdf");
