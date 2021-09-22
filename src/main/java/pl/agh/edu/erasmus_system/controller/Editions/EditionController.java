@@ -169,6 +169,30 @@ public class EditionController {
         }
     }
 
+    @RequestMapping(value = "/update", method= RequestMethod.POST)
+    public ResponseEntity<String> updateEdition(@RequestParam("edition_year") String editionYear,
+                                                @RequestParam("registrations_file") MultipartFile registrationsFile) throws IOException {
+        if (!editionRepository.findByIsActiveIsTrue().isEmpty())
+            return new ResponseEntity<>("Only one edition can be active", HttpStatus.NOT_ACCEPTABLE);
+
+        File registrationsConvertedFile = FileUtils.convert(registrationsFile);
+        if (!registrationsFile.isEmpty()) {
+            try {
+                readCSVFileService.updateRegistrations(registrationsConvertedFile, editionYear);
+                registrationsConvertedFile.delete();
+
+                return new ResponseEntity<>(HttpStatus.OK);
+
+            } catch (Exception e) {
+
+                return new ResponseEntity<>("You failed to upload " + " => " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+            }
+        } else {
+
+            return new ResponseEntity<>("You failed to upload " + " because the file was empty.", HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
 
 
 }

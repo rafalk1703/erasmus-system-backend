@@ -8,6 +8,7 @@ import pl.agh.edu.erasmus_system.model.Registration;
 import pl.agh.edu.erasmus_system.model.Student;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RegistrationRepository extends CrudRepository<Registration, Long> {
@@ -39,4 +40,6 @@ public interface RegistrationRepository extends CrudRepository<Registration, Lon
             "left join Contracts c on r.contract = c " +
             "where c.edition.id = ?1 and r.isAccepted=true")
     List<Registration> findAllByContract_Edition_IdAndIsAccepted(long editionId);
+
+    Optional<Registration> findByStudent_IdAndPriority(long studentId, Integer priority);
 }

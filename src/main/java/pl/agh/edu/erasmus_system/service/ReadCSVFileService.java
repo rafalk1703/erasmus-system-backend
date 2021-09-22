@@ -194,5 +194,82 @@ public class ReadCSVFileService {
         }
     }
 
+    public void updateRegistrations(File file, String year) {
+        List<String[]> r = null;
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
+            r = reader.readAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Edition edition = editionRepository.findByYear(year).get();
+
+        int listIndex = 0;
+        for (String[] arrays : r) {
+            if (listIndex++ > 0) {
+
+                Registration registration = new Registration();
+                Student student = null;
+                if (studentRepository.findStudentByEditionAndEmail(edition.getId(), Array.get(arrays, 7).toString()).isEmpty()) {
+                    student = new Student();
+                    student.setName(Array.get(arrays, 4).toString());
+                    student.setSurname(Array.get(arrays, 5).toString());
+                    student.setDepartment(Array.get(arrays, 3).toString());
+                    student.setEmail(Array.get(arrays, 7).toString());
+                    student.setYear(Array.get(arrays, 2).toString());
+                    student.setField(Array.get(arrays, 22).toString());
+                    student.setPhoneNumber(Array.get(arrays, 23).toString());
+                    student.setEarlierParticipation(Array.get(arrays, 24).toString());
+                    student.setPeriodOfStay(Array.get(arrays, 20).toString());
+                    studentRepository.save(student);
+                    registration.setIsNominated(false);
+                    registration.setIsAccepted(false);
+                    registration.setStudent(student);
+                    registration.setPriority(Integer.parseInt(Array.get(arrays, 21).toString()));
+                    ContractsCoordinator contractsCoordinator = contractCoordinatorRepository.findByName(Array.get(arrays, 15).toString()).get();
+                    String erasmusCode = Array.get(arrays, 17).toString();
+                    String degree = Array.get(arrays, 19).toString() + "st";
+                    Contract contract = contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(erasmusCode, contractsCoordinator.getCode(), edition, degree).get();
+                    registration.setContract(contract);
+                    registrationRepository.save(registration);
+                } else {
+                    student = studentRepository.findStudentByEditionAndEmail(edition.getId(), Array.get(arrays, 7).toString()).get();
+                    if (!student.getName().equals(Array.get(arrays, 4).toString()))
+                        student.setName(Array.get(arrays, 4).toString());
+                    if (!student.getSurname().equals(Array.get(arrays, 5).toString()))
+                        student.setSurname(Array.get(arrays, 5).toString());
+                    if (!student.getDepartment().equals(Array.get(arrays, 3).toString()))
+                        student.setDepartment(Array.get(arrays, 3).toString());
+                    if (!student.getYear().equals(Array.get(arrays, 2).toString()))
+                        student.setYear(Array.get(arrays, 2).toString());
+                    if (!student.getField().equals(Array.get(arrays, 22).toString()))
+                        student.setField(Array.get(arrays, 22).toString());
+                    if (!student.getPhoneNumber().equals(Array.get(arrays, 23).toString()))
+                        student.setPhoneNumber(Array.get(arrays, 23).toString());
+                    if (!student.getEarlierParticipation().equals(Array.get(arrays, 24).toString()))
+                        student.setEarlierParticipation(Array.get(arrays, 24).toString());
+                    if (!student.getPeriodOfStay().equals(Array.get(arrays, 20).toString()))
+                        student.setPeriodOfStay(Array.get(arrays, 20).toString());
+                    studentRepository.save(student);
+                    registration = registrationRepository.findByStudent_IdAndPriority(student.getId(), Integer.parseInt(Array.get(arrays, 21).toString())).get();
+
+                    ContractsCoordinator contractsCoordinator = contractCoordinatorRepository.findByName(Array.get(arrays, 15).toString()).get();
+                    String erasmusCode = Array.get(arrays, 17).toString();
+                    String degree = Array.get(arrays, 19).toString() + "st";
+
+                    if (!registration.getContract().getErasmusCode().equals(erasmusCode) ||
+                            !registration.getContract().getErasmusCode().equals(degree) ||
+                            !registration.getContract().getContractsCoordinator().equals(contractsCoordinator)) {
+                        Contract contract = contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(erasmusCode, contractsCoordinator.getCode(), edition, degree).get();
+                        registration.setContract(contract);
+                        registrationRepository.save(registration);
+                    }
+                }
+
+            }
+
+        }
+    }
+
 
 }
