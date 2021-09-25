@@ -1,4 +1,4 @@
-package pl.agh.edu.erasmus_system.controller.qualification.request_body;
+package pl.agh.edu.erasmus_system.controller.qualification.request_bodies;
 
 import lombok.Getter;
 

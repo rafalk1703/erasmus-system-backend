@@ -4,13 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.agh.edu.erasmus_system.controller.qualification.request_body.QualificationSaveRequestBody;
+import pl.agh.edu.erasmus_system.controller.qualification.request_bodies.QualificationSaveRequestBody;
 import pl.agh.edu.erasmus_system.controller.qualification.response_bodies.*;
 import pl.agh.edu.erasmus_system.model.Contract;
+import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
 import pl.agh.edu.erasmus_system.model.Registration;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
 import pl.agh.edu.erasmus_system.repository.RegistrationRepository;
 import pl.agh.edu.erasmus_system.service.QualificationService;
+import pl.agh.edu.erasmus_system.service.SessionService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +34,21 @@ public class QualificationController {
     @Autowired
     private RegistrationRepository registrationRepository;
 
+    @Autowired
+    private SessionService sessionService;
+
     /**
-     * Get content of qualification view table.
-     *
+     * Get content of qualification view table
      * @return OK(200) with contracts details in response body
+     * UNAUTHORIZED(401) if session expired
      */
     @RequestMapping(value = "/view", method = RequestMethod.GET)
     public ResponseEntity<QualificationResponseBody> getContracts() {
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+        if (coordinator == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         QualificationResponseBody response = new QualificationResponseBody();
         List<Contract> contracts = contractRepository.findAll();
         for (Contract contract : contracts) {
@@ -70,6 +80,10 @@ public class QualificationController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity saveQualification(@RequestBody QualificationSaveRequestBody requestBody) {
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+        if (coordinator == null) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
 
         requestBody.getRegistrations().forEach(
                registration -> {

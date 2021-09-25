@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.agh.edu.erasmus_system.controller.contracts.response_bodies.*;
 import pl.agh.edu.erasmus_system.model.Contract;
+import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
+import pl.agh.edu.erasmus_system.service.SessionService;
 
 import java.util.List;
 
@@ -17,6 +19,9 @@ public class ContractController {
 
     @Autowired
     private ContractRepository contractRepository;
+
+    @Autowired
+    private SessionService sessionService;
 
     @RequestMapping(value = "/allContractsView", method = RequestMethod.GET)
     public ResponseEntity<ContractResponseBody> getAllContracts() {
@@ -41,6 +46,11 @@ public class ContractController {
     }
 
     private ResponseEntity<ContractResponseBody> getContractResponseEntity(List<Contract> contracts) {
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+        if (coordinator == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         ContractResponseBody response = new ContractResponseBody();
 
         for (Contract contract : contracts) {
@@ -63,7 +73,4 @@ public class ContractController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-
-
 }
