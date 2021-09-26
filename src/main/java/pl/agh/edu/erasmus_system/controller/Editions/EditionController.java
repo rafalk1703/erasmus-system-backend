@@ -185,7 +185,7 @@ public class EditionController {
                                               @RequestParam("coordinators_file") MultipartFile coordinatorsFile,
                                               @RequestParam("contracts_file") MultipartFile contractsFile,
                                               @RequestParam("registrations_file") MultipartFile registrationsFile,
-                                                @RequestHeader("Session-Code") String sessionCode
+                                                @RequestParam("session_code") String sessionCode
                                               ) throws IOException {
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
