@@ -21,7 +21,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("api/")
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ContractCoordinatorController {
 
     @Autowired
@@ -42,7 +42,7 @@ public class ContractCoordinatorController {
      * UNAUTHORIZED (401) when credentials are wrong
      */
     @RequestMapping(value ="/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody LoginRequestBody requestBody) {
+    public ResponseEntity<String> login(@RequestBody LoginRequestBody requestBody) {
         String email = requestBody.getEmail();
         String password = requestBody.getPassword();
 
@@ -52,15 +52,16 @@ public class ContractCoordinatorController {
             if(PasswordManagement.check(password, coordinator.getHash())){
                 Session newSession = SessionGenerator.getNewSession(coordinator, sessionRepository);
                 sessionRepository.save(newSession);
-                return new ResponseEntity(HttpStatus.OK);
+                return new ResponseEntity<>("\"" + newSession.getCode() + "\"", HttpStatus.OK);
             }
         }
-        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
     }
 
     @RequestMapping(value = "/delete/all", method = RequestMethod.GET)
-    public ResponseEntity deleteAllContractCoordinators() {
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+    public ResponseEntity deleteAllContractCoordinators(@RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
@@ -74,15 +75,16 @@ public class ContractCoordinatorController {
     }
 
     @RequestMapping(value = "/allContractCoordinatorsView", method = RequestMethod.GET)
-    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinators() {
+    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinators(@RequestHeader("Session-Code") String sessionCode) {
 
         List<ContractsCoordinator> contractsCoordinators = contractCoordinatorRepository.findAll();
 
-        return getContractCoordinatorResponseEntity(contractsCoordinators);
+        return getContractCoordinatorResponseEntity(sessionCode, contractsCoordinators);
     }
 
     @RequestMapping(value = "/allContractCoordinatorsView/{edition}", method = RequestMethod.GET)
-    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinatorsByEdition(@PathVariable("edition") String edition) {
+    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinatorsByEdition(@PathVariable("edition") String edition,
+                                                                                               @RequestHeader("Session-Code") String sessionCode) {
 
         List<Contract> contractsByEdition = contractRepository.findByEdition_Year(edition);
         Set<ContractsCoordinator> contractsCoordinators = new LinkedHashSet<>();
@@ -91,11 +93,12 @@ public class ContractCoordinatorController {
             contractsCoordinators.add(contract.getContractsCoordinator());
         }
 
-        return getContractCoordinatorResponseEntity(new LinkedList<>(contractsCoordinators));
+        return getContractCoordinatorResponseEntity(sessionCode, new LinkedList<>(contractsCoordinators));
     }
 
-    private ResponseEntity<ContractCoordinatorResponseBody> getContractCoordinatorResponseEntity(List<ContractsCoordinator> contractsCoordinators) {
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+    private ResponseEntity<ContractCoordinatorResponseBody> getContractCoordinatorResponseEntity(String sessionCode,
+                                                                                                 List<ContractsCoordinator> contractsCoordinators) {
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }

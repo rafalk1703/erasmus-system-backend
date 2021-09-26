@@ -22,7 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("api/qualification")
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class QualificationController {
 
     @Autowired
@@ -43,8 +43,9 @@ public class QualificationController {
      * UNAUTHORIZED(401) if session expired
      */
     @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public ResponseEntity<QualificationResponseBody> getContracts() {
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+    public ResponseEntity<QualificationResponseBody> getContracts(@RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -80,7 +81,8 @@ public class QualificationController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity saveQualification(@RequestBody QualificationSaveRequestBody requestBody) {
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(requestBody);
         if (coordinator == null) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }

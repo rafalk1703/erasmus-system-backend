@@ -23,7 +23,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("api/edition")
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class EditionController {
 
     @Autowired
@@ -42,9 +42,9 @@ public class EditionController {
     private SessionService sessionService;
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public ResponseEntity<List<Edition>> getEditions() {
+    public ResponseEntity<List<Edition>> getEditions(@RequestHeader("Session-Code") String sessionCode) {
 
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -53,9 +53,10 @@ public class EditionController {
     }
 
     @RequestMapping(value = "/delete/{edition}", method = RequestMethod.GET)
-    public ResponseEntity deleteEdition(@PathVariable("edition") String edition) {
+    public ResponseEntity deleteEdition(@PathVariable("edition") String edition,
+                                        @RequestHeader("Session-Code") String sessionCode) {
 
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
@@ -79,9 +80,9 @@ public class EditionController {
     }
 
     @RequestMapping(value = "/active", method = RequestMethod.GET)
-    public ResponseEntity<Edition> getActiveEditions() {
+    public ResponseEntity<Edition> getActiveEditions(@RequestHeader("Session-Code") String sessionCode) {
 
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -91,9 +92,10 @@ public class EditionController {
 
 
     @RequestMapping(value = "/isActive/{edition_year}", method = RequestMethod.GET)
-    public ResponseEntity<Boolean> checkIfIsActiveEdition(@PathVariable("edition_year") String editionYear) {
+    public ResponseEntity<Boolean> checkIfIsActiveEdition(@PathVariable("edition_year") String editionYear,
+                                                          @RequestHeader("Session-Code") String sessionCode) {
 
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -102,9 +104,10 @@ public class EditionController {
     }
 
     @RequestMapping(value = "/statistics/{edition_year}", method = RequestMethod.GET)
-    public ResponseEntity<EditionStatisticsResponseBody> editionStatistics(@PathVariable("edition_year") String editionYear) {
+    public ResponseEntity<EditionStatisticsResponseBody> editionStatistics(@PathVariable("edition_year") String editionYear,
+                                                                           @RequestHeader("Session-Code") String sessionCode) {
 
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -148,9 +151,10 @@ public class EditionController {
     }
 
     @RequestMapping(value = "/deactivate/{edition}", method = RequestMethod.GET)
-    public ResponseEntity deactivateEdition(@PathVariable("edition") String edition) {
+    public ResponseEntity deactivateEdition(@PathVariable("edition") String edition,
+                                            @RequestHeader("Session-Code") String sessionCode) {
 
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
@@ -162,9 +166,10 @@ public class EditionController {
     }
 
     @RequestMapping(value = "/activate/{edition}", method = RequestMethod.GET)
-    public ResponseEntity activateEdition(@PathVariable("edition") String edition) {
+    public ResponseEntity activateEdition(@PathVariable("edition") String edition,
+                                          @RequestHeader("Session-Code") String sessionCode) {
 
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
@@ -179,9 +184,10 @@ public class EditionController {
     public ResponseEntity<String> addNewEdition(@PathVariable("edition_year") String editionYear,
                                               @RequestParam("coordinators_file") MultipartFile coordinatorsFile,
                                               @RequestParam("contracts_file") MultipartFile contractsFile,
-                                              @RequestParam("registrations_file") MultipartFile registrationsFile
+                                              @RequestParam("registrations_file") MultipartFile registrationsFile,
+                                                @RequestHeader("Session-Code") String sessionCode
                                               ) throws IOException {
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
         }

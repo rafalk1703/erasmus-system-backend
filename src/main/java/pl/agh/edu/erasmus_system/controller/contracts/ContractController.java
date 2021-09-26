@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/")
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ContractController {
 
     @Autowired
@@ -24,29 +24,33 @@ public class ContractController {
     private SessionService sessionService;
 
     @RequestMapping(value = "/allContractsView", method = RequestMethod.GET)
-    public ResponseEntity<ContractResponseBody> getAllContracts() {
+    public ResponseEntity<ContractResponseBody> getAllContracts(@RequestHeader("Session-Code") String sessionCode) {
 
         List<Contract> contracts = contractRepository.findAll();
 
-        return getContractResponseEntity(contracts);
+        return getContractResponseEntity(sessionCode, contracts);
     }
 
     @RequestMapping(value = "/allContractsView/{edition}", method = RequestMethod.GET)
-    public ResponseEntity<ContractResponseBody> getAllContractsByEdition(@PathVariable("edition") String edition) {
+    public ResponseEntity<ContractResponseBody> getAllContractsByEdition(@PathVariable("edition") String edition,
+                                                                         @RequestHeader("Session-Code") String sessionCode) {
 
         List<Contract> contractsByEdition = contractRepository.findByEdition_Year(edition);
-        return getContractResponseEntity(contractsByEdition);
+        return getContractResponseEntity(sessionCode, contractsByEdition);
     }
 
     @RequestMapping(value = "/allContractsView/{edition}/{coordinator_code}", method = RequestMethod.GET)
-    public ResponseEntity<ContractResponseBody> getAllContractsByEditionAndCoordinator(@PathVariable("edition") String edition, @PathVariable("coordinator_code") String coordinatorCode) {
+    public ResponseEntity<ContractResponseBody> getAllContractsByEditionAndCoordinator(@PathVariable("edition") String edition,
+                                                                                       @PathVariable("coordinator_code") String coordinatorCode,
+                                                                                       @RequestHeader("Session-Code") String sessionCode) {
 
         List<Contract> contractsByEditionAndCoordinator = contractRepository.findByEdition_YearAndContractsCoordinator_Code(edition, coordinatorCode);
-        return getContractResponseEntity(contractsByEditionAndCoordinator);
+        return getContractResponseEntity(sessionCode, contractsByEditionAndCoordinator);
     }
 
-    private ResponseEntity<ContractResponseBody> getContractResponseEntity(List<Contract> contracts) {
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf("sessionCode");
+    private ResponseEntity<ContractResponseBody> getContractResponseEntity(String sessionCode, List<Contract> contracts) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
