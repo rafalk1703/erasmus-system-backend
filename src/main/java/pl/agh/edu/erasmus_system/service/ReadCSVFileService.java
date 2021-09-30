@@ -194,15 +194,14 @@ public class ReadCSVFileService {
         }
     }
 
-    public void updateRegistrations(File file, String year) {
+    public void updateRegistrations(File file, long id) {
         List<String[]> r = null;
         try (CSVReader reader = new CSVReader(new FileReader(file))) {
             r = reader.readAll();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        Edition edition = editionRepository.findByYear(year).get();
+        Edition edition = editionRepository.findById(id).get();
 
         int listIndex = 0;
         for (String[] arrays : r) {

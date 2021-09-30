@@ -170,15 +170,18 @@ public class EditionController {
     }
 
     @RequestMapping(value = "/update", method= RequestMethod.POST)
-    public ResponseEntity<String> updateEdition(@RequestParam("edition_year") String editionYear,
-                                                @RequestParam("registrations_file") MultipartFile registrationsFile) throws IOException {
-        if (!editionRepository.findByIsActiveIsTrue().isEmpty())
-            return new ResponseEntity<>("Only one edition can be active", HttpStatus.NOT_ACCEPTABLE);
+    public ResponseEntity<String> updateEdition(@RequestParam("edition_id") long editionId,
+                                                @RequestParam("edit_edition_file") MultipartFile editEditionFile) throws IOException {
 
-        File registrationsConvertedFile = FileUtils.convert(registrationsFile);
-        if (!registrationsFile.isEmpty()) {
+        System.out.println("update1");
+        if (!editionRepository.findById(editionId).get().getIsActive())
+            return new ResponseEntity<>("You cannot edit inactive edition", HttpStatus.NOT_ACCEPTABLE);
+
+        System.out.println("update");
+        File registrationsConvertedFile = FileUtils.convert(editEditionFile);
+        if (!editEditionFile.isEmpty()) {
             try {
-                readCSVFileService.updateRegistrations(registrationsConvertedFile, editionYear);
+                readCSVFileService.updateRegistrations(registrationsConvertedFile, editionId);
                 registrationsConvertedFile.delete();
 
                 return new ResponseEntity<>(HttpStatus.OK);
