@@ -1,6 +1,5 @@
 package pl.agh.edu.erasmus_system.controller.Editions;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,23 +7,23 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.agh.edu.erasmus_system.Utils.FileUtils;
 import pl.agh.edu.erasmus_system.controller.Editions.response_bodies.EditionStatisticsResponseBody;
-import pl.agh.edu.erasmus_system.controller.contracts.response_bodies.ContractResponseBody;
 import pl.agh.edu.erasmus_system.model.Contract;
+import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
 import pl.agh.edu.erasmus_system.model.Edition;
 import pl.agh.edu.erasmus_system.model.Registration;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
 import pl.agh.edu.erasmus_system.repository.EditionRepository;
 import pl.agh.edu.erasmus_system.repository.RegistrationRepository;
 import pl.agh.edu.erasmus_system.service.ReadCSVFileService;
+import pl.agh.edu.erasmus_system.service.SessionService;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
 @RestController
 @RequestMapping("api/edition")
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class EditionController {
 
     @Autowired
@@ -39,13 +38,29 @@ public class EditionController {
     @Autowired
     private RegistrationRepository registrationRepository;
 
+    @Autowired
+    private SessionService sessionService;
+
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public List<Edition> getEditions() {
-        return editionRepository.findAll();
+    public ResponseEntity<List<Edition>> getEditions(@RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return new ResponseEntity<>(editionRepository.findAll(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete/{edition_id}", method = RequestMethod.GET)
-    public void deleteEdition(@PathVariable("edition_id") long editionId) {
+    public ResponseEntity deleteEdition(@PathVariable("edition_id") long editionId,
+                                        @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
         Edition editionToDelete = editionRepository.findById(editionId).get();
         List<Contract> contractsToDelete = contractRepository.findByEdition_Id(editionId);
         List<Registration> registrationsToDelete = new LinkedList<>();
@@ -60,23 +75,44 @@ public class EditionController {
             contractRepository.delete(contract);
 
         editionRepository.delete(editionToDelete);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/active", method = RequestMethod.GET)
-    public Edition getActiveEditions() {
+    public ResponseEntity<Edition> getActiveEditions(@RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         if (editionRepository.findByIsActiveIsTrue().size() == 0)
-            return null;
-        return editionRepository.findByIsActiveIsTrue().get(0);
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(editionRepository.findByIsActiveIsTrue().get(0), HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/isActive/{edition_id}", method = RequestMethod.GET)
-    public Boolean checkIfIsActiveEdition(@PathVariable("edition_id") long editionId) {
-        return editionRepository.findById(editionId).get().getIsActive();
+    public ResponseEntity<Boolean> checkIfIsActiveEdition(@PathVariable("edition_id") long editionId,
+                                                          @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return new ResponseEntity<>(editionRepository.findById(editionId).get().getIsActive(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/statistics/{edition_id}", method = RequestMethod.GET)
-    public ResponseEntity<EditionStatisticsResponseBody> editionStatistics(@PathVariable("edition_id") long editionId) {
+    public ResponseEntity<EditionStatisticsResponseBody> editionStatistics(@PathVariable("edition_id") long editionId,
+                                                                           @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
 
         Edition edition = editionRepository.findById(editionId).get();
         String editionYear = edition.getYear();
@@ -107,7 +143,6 @@ public class EditionController {
                 if (contract.getDegree().equals("3st") && contract.getVacancies() > 0)
                     numberOfRegistrations3Degree++;
             }
-
         }
 
         EditionStatisticsResponseBody response = new EditionStatisticsResponseBody(editionId, editionYear, contracts.size(), numberOfRegistrations, numberOfContracts1Degree,
@@ -115,12 +150,17 @@ public class EditionController {
                 numberOfRegistrations3Degree);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 
-
     @RequestMapping(value = "/deactivate/{edition_id}", method = RequestMethod.GET)
-    public ResponseEntity deactivateEdition(@PathVariable("edition_id") long editionId) {
+    public ResponseEntity deactivateEdition(@PathVariable("edition_id") long editionId,
+                                            @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
         Edition deactivatedEdition = editionRepository.findById(editionId).get();
         deactivatedEdition.setIsActive(false);
         editionRepository.save(deactivatedEdition);
@@ -128,7 +168,14 @@ public class EditionController {
     }
 
     @RequestMapping(value = "/activate/{edition_id}", method = RequestMethod.GET)
-    public ResponseEntity activateEdition(@PathVariable("edition_id") long editionId) {
+    public ResponseEntity activateEdition(@PathVariable("edition_id") long editionId,
+                                          @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
         Edition deactivatedEdition = editionRepository.findById(editionId).get();
         deactivatedEdition.setIsActive(true);
         editionRepository.save(deactivatedEdition);
@@ -139,8 +186,14 @@ public class EditionController {
     public ResponseEntity<String> addNewEdition(@RequestParam("edition_year") String editionYear,
                                               @RequestParam("coordinators_file") MultipartFile coordinatorsFile,
                                               @RequestParam("contracts_file") MultipartFile contractsFile,
-                                              @RequestParam("registrations_file") MultipartFile registrationsFile
+                                              @RequestParam("registrations_file") MultipartFile registrationsFile,
+                                                @RequestParam("session_code") String sessionCode
                                               ) throws IOException {
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+        }
+
         if (!editionRepository.findByIsActiveIsTrue().isEmpty())
             return new ResponseEntity<>("Only one edition can be active", HttpStatus.NOT_ACCEPTABLE);
         System.out.println("dzialaEndpoint");
@@ -158,13 +211,10 @@ public class EditionController {
                 registrationsConvertedFile.delete();
 
                 return new ResponseEntity<>(HttpStatus.OK);
-
             } catch (Exception e) {
-
                 return new ResponseEntity<>("You failed to upload " + " => " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
             }
         } else {
-
             return new ResponseEntity<>("You failed to upload " + " because the file was empty.", HttpStatus.NOT_ACCEPTABLE);
         }
     }
@@ -185,17 +235,11 @@ public class EditionController {
                 registrationsConvertedFile.delete();
 
                 return new ResponseEntity<>(HttpStatus.OK);
-
             } catch (Exception e) {
-
                 return new ResponseEntity<>("You failed to upload " + " => " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
             }
         } else {
-
             return new ResponseEntity<>("You failed to upload " + " because the file was empty.", HttpStatus.NOT_ACCEPTABLE);
         }
     }
-
-
-
 }

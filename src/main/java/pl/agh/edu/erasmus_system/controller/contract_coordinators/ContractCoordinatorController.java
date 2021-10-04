@@ -4,18 +4,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.agh.edu.erasmus_system.Utils.PasswordManagement;
+import pl.agh.edu.erasmus_system.Utils.SessionGenerator;
+import pl.agh.edu.erasmus_system.controller.contract_coordinators.request_bodies.LoginRequestBody;
 import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies.ContractCoordinatorResponseBody;
 import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies.ContractCoordinatorSingleResponseBody;
 import pl.agh.edu.erasmus_system.model.Contract;
 import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
+import pl.agh.edu.erasmus_system.model.Session;
 import pl.agh.edu.erasmus_system.repository.ContractCoordinatorRepository;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
+import pl.agh.edu.erasmus_system.repository.SessionRepository;
+import pl.agh.edu.erasmus_system.service.SessionService;
 
 import java.util.*;
 
 @RestController
 @RequestMapping("api/")
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ContractCoordinatorController {
 
     @Autowired
@@ -24,8 +30,42 @@ public class ContractCoordinatorController {
     @Autowired
     private ContractRepository contractRepository;
 
+    @Autowired
+    private SessionRepository sessionRepository;
+
+    @Autowired
+    private SessionService sessionService;
+
+    /**
+     * @param requestBody- body of request with params: email and password
+     * @return OK (200) when credentials are correct
+     * UNAUTHORIZED (401) when credentials are wrong
+     */
+    @RequestMapping(value ="/login", method = RequestMethod.POST)
+    public ResponseEntity<String> login(@RequestBody LoginRequestBody requestBody) {
+        String email = requestBody.getEmail();
+        String password = requestBody.getPassword();
+
+        Optional<ContractsCoordinator> coordinatorOptional = contractCoordinatorRepository.findByEmail(email);
+        if(coordinatorOptional.isPresent()){
+            ContractsCoordinator coordinator = coordinatorOptional.get();
+            if(PasswordManagement.check(password, coordinator.getHash())){
+                Session newSession = SessionGenerator.getNewSession(coordinator, sessionRepository);
+                sessionRepository.save(newSession);
+                return new ResponseEntity<>("\"" + newSession.getCode() + "\"", HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+    }
+
     @RequestMapping(value = "/delete/all", method = RequestMethod.GET)
-    public ResponseEntity deleteAllContractCoordinators() {
+    public ResponseEntity deleteAllContractCoordinators(@RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
         List<ContractsCoordinator> contractsCoordinators = contractCoordinatorRepository.findAll();
         for (var contractCoordinator : contractsCoordinators) {
             contractCoordinatorRepository.delete(contractCoordinator);
@@ -35,16 +75,16 @@ public class ContractCoordinatorController {
     }
 
     @RequestMapping(value = "/allContractCoordinatorsView", method = RequestMethod.GET)
-    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinators() {
+    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinators(@RequestHeader("Session-Code") String sessionCode) {
 
         List<ContractsCoordinator> contractsCoordinators = contractCoordinatorRepository.findAll();
 
-        return getContractCoordinatorResponseEntity(contractsCoordinators);
+        return getContractCoordinatorResponseEntity(sessionCode, contractsCoordinators);
     }
 
-    @RequestMapping(value = "/allContractCoordinatorsView/{edition_id}", method = RequestMethod.GET)
-    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinatorsByEdition(@PathVariable("edition_id") long editionId) {
-
+    @RequestMapping(value = "/allContractCoordinatorsView/{edition_Id}", method = RequestMethod.GET)
+    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinatorsByEdition(@PathVariable("edition_id") long editionId,
+                                                                                               @RequestHeader("Session-Code") String sessionCode) {
         List<Contract> contractsByEdition = contractRepository.findByEdition_Id(editionId);
         Set<ContractsCoordinator> contractsCoordinators = new LinkedHashSet<>();
 
@@ -52,10 +92,16 @@ public class ContractCoordinatorController {
             contractsCoordinators.add(contract.getContractsCoordinator());
         }
 
-        return getContractCoordinatorResponseEntity(new LinkedList<>(contractsCoordinators));
+        return getContractCoordinatorResponseEntity(sessionCode, new LinkedList<>(contractsCoordinators));
     }
 
-    private ResponseEntity<ContractCoordinatorResponseBody> getContractCoordinatorResponseEntity(List<ContractsCoordinator> contractsCoordinators) {
+    private ResponseEntity<ContractCoordinatorResponseBody> getContractCoordinatorResponseEntity(String sessionCode,
+                                                                                                 List<ContractsCoordinator> contractsCoordinators) {
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         ContractCoordinatorResponseBody response = new ContractCoordinatorResponseBody();
 
         for (ContractsCoordinator contractsCoordinator : contractsCoordinators) {
@@ -71,6 +117,4 @@ public class ContractCoordinatorController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-
 }
