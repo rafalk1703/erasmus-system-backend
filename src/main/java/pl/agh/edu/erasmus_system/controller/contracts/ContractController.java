@@ -34,7 +34,7 @@ public class ContractController {
     @RequestMapping(value = "/allContractsView/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity<ContractResponseBody> getAllContractsByEdition(@PathVariable("edition_id") long editionId,
                                                                          @RequestHeader("Session-Code") String sessionCode) {
-        List<Contract> contractsByEdition = contractRepository.findByEdition_Year(editionId);
+        List<Contract> contractsByEdition = contractRepository.findByEdition_Id(editionId);
         return getContractResponseEntity(sessionCode, contractsByEdition);
     }
 
