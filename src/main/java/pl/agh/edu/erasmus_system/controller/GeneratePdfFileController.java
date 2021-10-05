@@ -3,7 +3,9 @@ package pl.agh.edu.erasmus_system.controller;
 import com.lowagie.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
 import pl.agh.edu.erasmus_system.service.GeneratePdfFileService;
+import pl.agh.edu.erasmus_system.service.SessionService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -19,38 +21,56 @@ public class GeneratePdfFileController {
     @Autowired
     private GeneratePdfFileService generatePdfFileService;
 
+    @Autowired
+    private SessionService sessionService;
+
     @RequestMapping(value="/generate/{edition_id}", method= RequestMethod.GET)
-    public void downloadPDF(HttpServletResponse response, @PathVariable("edition_id") long editionId) {
-        try {
-            Path file = Paths.get(generatePdfFileService.generatePdf(editionId).getAbsolutePath());
-            if (Files.exists(file)) {
-                response.setCharacterEncoding("UTF-8");
-                response.setContentType("application/pdf");
-                response.addHeader("Content-Disposition",
-                        "attachment; filename=" + "Lista_wydzialowa_spoza_WIEiT");
-                Files.copy(file, response.getOutputStream());
-                response.getOutputStream().flush();
+    public void downloadPDF(HttpServletResponse response,
+                            @PathVariable("edition_id") long editionId,
+                            @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        } else {
+            try {
+                Path file = Paths.get(generatePdfFileService.generatePdf(editionId).getAbsolutePath());
+                if (Files.exists(file)) {
+                    response.setCharacterEncoding("UTF-8");
+                    response.setContentType("application/pdf");
+                    response.addHeader("Content-Disposition",
+                            "attachment; filename=" + "Lista_wydzialowa_spoza_WIEiT");
+                    Files.copy(file, response.getOutputStream());
+                    response.getOutputStream().flush();
+                }
+            } catch (IOException | DocumentException ex) {
+                ex.printStackTrace();
             }
-        } catch (IOException | DocumentException ex) {
-            ex.printStackTrace();
         }
     }
 
     @RequestMapping(value="/generate/WIEIT/{edition_id}", method= RequestMethod.GET)
-    public void downloadPDFWIEIT(HttpServletResponse response, @PathVariable("edition_id") long editionId) {
-        try {
-            Path file = Paths.get(generatePdfFileService.generatePdfWIEIT(editionId).getAbsolutePath());
-            if (Files.exists(file)) {
-                response.setCharacterEncoding("UTF-8");
-                response.setContentType("application/pdf");
-                response.addHeader("Content-Disposition",
-                        "attachment; filename=" + "Lista_wydzialowa_WIEiT");
-                Files.copy(file, response.getOutputStream());
-                response.getOutputStream().flush();
+    public void downloadPDFWIEIT(HttpServletResponse response,
+                                 @PathVariable("edition_id") long editionId,
+                                 @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        } else {
+            try {
+                Path file = Paths.get(generatePdfFileService.generatePdfWIEIT(editionId).getAbsolutePath());
+                if (Files.exists(file)) {
+                    response.setCharacterEncoding("UTF-8");
+                    response.setContentType("application/pdf");
+                    response.addHeader("Content-Disposition",
+                            "attachment; filename=" + "Lista_wydzialowa_WIEiT");
+                    Files.copy(file, response.getOutputStream());
+                    response.getOutputStream().flush();
+                }
+            } catch (IOException | DocumentException ex) {
+                ex.printStackTrace();
             }
-        } catch (IOException | DocumentException ex) {
-            ex.printStackTrace();
         }
     }
-
 }

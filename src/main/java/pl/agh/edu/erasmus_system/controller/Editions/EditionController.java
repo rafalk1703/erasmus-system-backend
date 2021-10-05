@@ -189,6 +189,7 @@ public class EditionController {
                                               @RequestParam("registrations_file") MultipartFile registrationsFile,
                                                 @RequestParam("session_code") String sessionCode
                                               ) throws IOException {
+
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
             return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
@@ -221,7 +222,14 @@ public class EditionController {
 
     @RequestMapping(value = "/update", method= RequestMethod.POST)
     public ResponseEntity<String> updateEdition(@RequestParam("edition_id") long editionId,
-                                                @RequestParam("edit_edition_file") MultipartFile editEditionFile) throws IOException {
+                                                @RequestParam("edit_edition_file") MultipartFile editEditionFile,
+                                                @RequestParam("session_code") String sessionCode
+                                                ) throws IOException {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+        }
 
         System.out.println("update1");
         if (!editionRepository.findById(editionId).get().getIsActive())
