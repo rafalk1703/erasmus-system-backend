@@ -9,6 +9,7 @@ import pl.agh.edu.erasmus_system.Utils.SessionGenerator;
 import pl.agh.edu.erasmus_system.controller.contract_coordinators.request_bodies.LoginRequestBody;
 import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies.ContractCoordinatorResponseBody;
 import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies.ContractCoordinatorSingleResponseBody;
+import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies.LoginResponseBody;
 import pl.agh.edu.erasmus_system.model.Contract;
 import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
 import pl.agh.edu.erasmus_system.model.Session;
@@ -38,11 +39,11 @@ public class ContractCoordinatorController {
 
     /**
      * @param requestBody- body of request with params: email and password
-     * @return OK (200) when credentials are correct
+     * @return OK (200) when credentials are correct - with response contains sessionCode and coordinatorRole
      * UNAUTHORIZED (401) when credentials are wrong
      */
     @RequestMapping(value ="/login", method = RequestMethod.POST)
-    public ResponseEntity<String> login(@RequestBody LoginRequestBody requestBody) {
+    public ResponseEntity<LoginResponseBody> login(@RequestBody LoginRequestBody requestBody) {
         String email = requestBody.getEmail();
         String password = requestBody.getPassword();
 
@@ -52,10 +53,10 @@ public class ContractCoordinatorController {
             if(PasswordManagement.check(password, coordinator.getHash())){
                 Session newSession = SessionGenerator.getNewSession(coordinator, sessionRepository);
                 sessionRepository.save(newSession);
-                return new ResponseEntity<>("\"" + newSession.getCode() + "\"", HttpStatus.OK);
+                return new ResponseEntity<>(new LoginResponseBody(newSession.getCode(), coordinator.getRole().toString()), HttpStatus.OK);
             }
         }
-        return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @RequestMapping(value = "/delete/all", method = RequestMethod.GET)

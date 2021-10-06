@@ -31,4 +31,8 @@ public class ContractsCoordinator {
 
     @Column(nullable = false)
     private String code;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private CoordinatorRole role;
 }
