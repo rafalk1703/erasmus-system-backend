@@ -12,6 +12,7 @@ import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodie
 import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies.LoginResponseBody;
 import pl.agh.edu.erasmus_system.model.Contract;
 import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
+import pl.agh.edu.erasmus_system.model.CoordinatorRole;
 import pl.agh.edu.erasmus_system.model.Session;
 import pl.agh.edu.erasmus_system.repository.ContractCoordinatorRepository;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
@@ -83,7 +84,7 @@ public class ContractCoordinatorController {
         return getContractCoordinatorResponseEntity(sessionCode, contractsCoordinators);
     }
 
-    @RequestMapping(value = "/allContractCoordinatorsView/{edition_Id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/allContractCoordinatorsView/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinatorsByEdition(@PathVariable("edition_id") long editionId,
                                                                                                @RequestHeader("Session-Code") String sessionCode) {
         List<Contract> contractsByEdition = contractRepository.findByEdition_Id(editionId);
@@ -99,7 +100,7 @@ public class ContractCoordinatorController {
     private ResponseEntity<ContractCoordinatorResponseBody> getContractCoordinatorResponseEntity(String sessionCode,
                                                                                                  List<ContractsCoordinator> contractsCoordinators) {
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null) {
+        if (coordinator == null || coordinator.getRole().equals(CoordinatorRole.CONTRACTS)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import pl.agh.edu.erasmus_system.model.Contract;
+import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
 import pl.agh.edu.erasmus_system.model.Edition;
 
 import java.util.Optional;
@@ -29,5 +30,5 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
 
     List<Contract> findByEdition_IdAndContractsCoordinator_Code(long editionId, String code);
 
-
+    List<Contract> findByEditionIdAndContractsCoordinator(long editionId, ContractsCoordinator coordinator);
 }

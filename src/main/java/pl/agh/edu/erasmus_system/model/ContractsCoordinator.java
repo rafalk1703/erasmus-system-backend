@@ -32,7 +32,7 @@ public class ContractsCoordinator {
     @Column(nullable = false)
     private String code;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CoordinatorRole role;
 }

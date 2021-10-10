@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import pl.agh.edu.erasmus_system.controller.contracts.response_bodies.*;
 import pl.agh.edu.erasmus_system.model.Contract;
 import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
+import pl.agh.edu.erasmus_system.model.CoordinatorRole;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
 import pl.agh.edu.erasmus_system.service.SessionService;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @RestController
@@ -26,16 +28,38 @@ public class ContractController {
     @RequestMapping(value = "/allContractsView", method = RequestMethod.GET)
     public ResponseEntity<ContractResponseBody> getAllContracts(@RequestHeader("Session-Code") String sessionCode) {
 
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null || coordinator.getRole().equals(CoordinatorRole.CONTRACTS)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         List<Contract> contracts = contractRepository.findAll();
 
-        return getContractResponseEntity(sessionCode, contracts);
+        return getContractResponseEntity(contracts);
     }
 
     @RequestMapping(value = "/allContractsView/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity<ContractResponseBody> getAllContractsByEdition(@PathVariable("edition_id") long editionId,
                                                                          @RequestHeader("Session-Code") String sessionCode) {
-        List<Contract> contractsByEdition = contractRepository.findByEdition_Id(editionId);
-        return getContractResponseEntity(sessionCode, contractsByEdition);
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        List<Contract> contractsByEdition;
+        switch (coordinator.getRole()) {
+            case DEPARTMENT:
+                contractsByEdition = contractRepository.findByEdition_Id(editionId);
+                break;
+            case CONTRACTS:
+                contractsByEdition = contractRepository.findByEditionIdAndContractsCoordinator(editionId, coordinator);
+                break;
+            default:
+                contractsByEdition = new LinkedList<>();
+        }
+
+        return getContractResponseEntity(contractsByEdition);
     }
 
     @RequestMapping(value = "/allContractsView/{edition_id}/{coordinator_code}", method = RequestMethod.GET)
@@ -43,16 +67,16 @@ public class ContractController {
                                                                                        @PathVariable("coordinator_code") String coordinatorCode,
                                                                                        @RequestHeader("Session-Code") String sessionCode) {
 
-        List<Contract> contractsByEditionAndCoordinator = contractRepository.findByEdition_IdAndContractsCoordinator_Code(editionId, coordinatorCode);
-        return getContractResponseEntity(sessionCode, contractsByEditionAndCoordinator);
-    }
-
-    private ResponseEntity<ContractResponseBody> getContractResponseEntity(String sessionCode, List<Contract> contracts) {
-
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null) {
+        if (coordinator == null || coordinator.getRole().equals(CoordinatorRole.CONTRACTS)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+
+        List<Contract> contractsByEditionAndCoordinator = contractRepository.findByEdition_IdAndContractsCoordinator_Code(editionId, coordinatorCode);
+        return getContractResponseEntity(contractsByEditionAndCoordinator);
+    }
+
+    private ResponseEntity<ContractResponseBody> getContractResponseEntity(List<Contract> contracts) {
 
         ContractResponseBody response = new ContractResponseBody();
 

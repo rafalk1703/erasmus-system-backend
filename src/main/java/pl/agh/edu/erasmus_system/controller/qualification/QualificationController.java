@@ -15,6 +15,7 @@ import pl.agh.edu.erasmus_system.service.QualificationService;
 import pl.agh.edu.erasmus_system.service.SessionService;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -42,8 +43,9 @@ public class QualificationController {
      * @return OK(200) with contracts details in response body
      * UNAUTHORIZED(401) if session expired
      */
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public ResponseEntity<QualificationResponseBody> getContracts(@RequestHeader("Session-Code") String sessionCode) {
+    @RequestMapping(value = "/editionView/{edition_id}", method = RequestMethod.GET)
+    public ResponseEntity<QualificationResponseBody> getContracts(@PathVariable("edition_id") long editionId,
+                                                                  @RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null) {
@@ -51,7 +53,19 @@ public class QualificationController {
         }
 
         QualificationResponseBody response = new QualificationResponseBody();
-        List<Contract> contracts = contractRepository.findAll();
+
+        List<Contract> contracts;
+        switch (coordinator.getRole()) {
+            case DEPARTMENT:
+                contracts = contractRepository.findByEdition_Id(editionId);
+                break;
+            case CONTRACTS:
+                contracts = contractRepository.findByEditionIdAndContractsCoordinator(editionId, coordinator);
+                break;
+            default:
+                contracts = new LinkedList<>();
+        }
+
         for (Contract contract : contracts) {
             QualificationCoordinatorResponseBody coordinatorResponseBody =
                     new QualificationCoordinatorResponseBody(contract.getContractsCoordinator());
