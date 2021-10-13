@@ -64,7 +64,7 @@ public class ContractCoordinatorController {
     public ResponseEntity deleteAllContractCoordinators(@RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null) {
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
 
@@ -100,7 +100,7 @@ public class ContractCoordinatorController {
     private ResponseEntity<ContractCoordinatorResponseBody> getContractCoordinatorResponseEntity(String sessionCode,
                                                                                                  List<ContractsCoordinator> contractsCoordinators) {
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null || coordinator.getRole().equals(CoordinatorRole.CONTRACTS)) {
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 

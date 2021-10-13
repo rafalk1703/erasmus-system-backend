@@ -7,10 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.agh.edu.erasmus_system.Utils.FileUtils;
 import pl.agh.edu.erasmus_system.controller.Editions.response_bodies.EditionStatisticsResponseBody;
-import pl.agh.edu.erasmus_system.model.Contract;
-import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
-import pl.agh.edu.erasmus_system.model.Edition;
-import pl.agh.edu.erasmus_system.model.Registration;
+import pl.agh.edu.erasmus_system.model.*;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
 import pl.agh.edu.erasmus_system.repository.EditionRepository;
 import pl.agh.edu.erasmus_system.repository.RegistrationRepository;
@@ -45,7 +42,7 @@ public class EditionController {
     public ResponseEntity<List<Edition>> getEditions(@RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null) {
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -57,7 +54,7 @@ public class EditionController {
                                         @RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null) {
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
 
@@ -92,13 +89,12 @@ public class EditionController {
         return new ResponseEntity<>(editionRepository.findByIsActiveIsTrue().get(0), HttpStatus.OK);
     }
 
-
     @RequestMapping(value = "/isActive/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity<Boolean> checkIfIsActiveEdition(@PathVariable("edition_id") long editionId,
                                                           @RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null) {
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -110,7 +106,7 @@ public class EditionController {
                                                                            @RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null) {
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -157,7 +153,7 @@ public class EditionController {
                                             @RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null) {
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
 
@@ -172,7 +168,7 @@ public class EditionController {
                                           @RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null) {
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
 
@@ -191,7 +187,7 @@ public class EditionController {
                                               ) throws IOException {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null) {
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
             return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
         }
 
@@ -227,7 +223,7 @@ public class EditionController {
                                                 ) throws IOException {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        if (coordinator == null) {
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
             return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
         }
 
