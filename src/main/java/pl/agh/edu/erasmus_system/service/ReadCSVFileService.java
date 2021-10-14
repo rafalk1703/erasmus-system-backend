@@ -74,7 +74,7 @@ public class ReadCSVFileService {
                     contractsCoordinator.setName(Array.get(arrays, 0).toString());
                     contractsCoordinator.setCode(Array.get(arrays, 1).toString());
                     contractsCoordinator.setRole(CoordinatorRole.CONTRACTS);
-                    //TODO Set coordinator email
+                    contractsCoordinator.setEmail(Array.get(arrays, 2).toString());
 
                     String password = PasswordManagement.generatePassword();
                     contractsCoordinator.setHash(PasswordManagement.generateHash(password));
