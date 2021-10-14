@@ -73,6 +73,7 @@ public class ReadCSVFileService {
                     ContractsCoordinator contractsCoordinator = new ContractsCoordinator();
                     contractsCoordinator.setName(Array.get(arrays, 0).toString());
                     contractsCoordinator.setCode(Array.get(arrays, 1).toString());
+                    contractsCoordinator.setRole(CoordinatorRole.CONTRACTS);
                     //TODO Set coordinator email
 
                     String password = PasswordManagement.generatePassword();

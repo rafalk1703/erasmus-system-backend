@@ -23,10 +23,10 @@ public class ContractsCoordinator {
     private String name;
 
     @Email
-    @Column
+    @Column(nullable = false)
     private String email;
 
-    @Column
+    @Column(nullable = false)
     private String hash;
 
     @Column(nullable = false)
