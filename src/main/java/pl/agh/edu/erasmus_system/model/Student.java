@@ -45,4 +45,19 @@ public class Student {
 
     @Column(nullable = false)
     private String earlierParticipation;
+
+    @Column(nullable = false)
+    private String averageGrade;
+
+    @Column(nullable = false)
+    private String examLevel;
+
+    @Column(nullable = false)
+    private String typeOfCertificate;
+
+    @Column(nullable = false)
+    private String foreignLanguage;
+
+    @Column(nullable = false)
+    private String ifCompletedSemester;
 }
