@@ -3,6 +3,7 @@ package pl.agh.edu.erasmus_system.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
 import pl.agh.edu.erasmus_system.model.Student;
 
 import java.util.List;
@@ -22,4 +23,13 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             "where c.edition.id = ?1 and r.student.email = ?2")
     Optional<Student> findStudentByEditionAndEmail(long editionId, String email);
 
+    @Query("select distinct r.student from Registrations r " +
+            "left join Contracts c on r.contract = c " +
+            "where c.edition.id = ?1")
+    List<Student> findStudentsByEditionId(long editionId);
+
+    @Query("select distinct r.student from Registrations r " +
+            "left join Contracts c on r.contract = c " +
+            "where c.edition.id = ?1 and c.contractsCoordinator = ?2")
+    List<Student> findStudentsByEditionAndCoordinator(long editionId, ContractsCoordinator coordinator);
 }
