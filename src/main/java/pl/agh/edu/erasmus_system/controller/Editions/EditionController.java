@@ -185,7 +185,6 @@ public class EditionController {
                                               @RequestParam("registrations_file") MultipartFile registrationsFile,
                                                 @RequestParam("session_code") String sessionCode
                                               ) throws IOException {
-
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
             return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);

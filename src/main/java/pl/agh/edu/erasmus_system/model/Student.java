@@ -59,8 +59,5 @@ public class Student {
     private String foreignLanguage;
 
     @Column(nullable = false)
-    private String ifCompletedSemester;
-
-    @Column(nullable = false)
     private String Address;
 }

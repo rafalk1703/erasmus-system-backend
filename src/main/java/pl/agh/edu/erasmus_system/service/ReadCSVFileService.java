@@ -42,28 +42,6 @@ public class ReadCSVFileService {
     @Value("${application.domain}")
     public String domainName;
 
-    public void saveCoordinatorsToDatabase(String fileName) {
-        List<String[]> r = null;
-        try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
-            r = reader.readAll();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        int listIndex = 0;
-        for (String[] arrays : r) {
-            if (listIndex++ > 0) {
-                ContractsCoordinator contractsCoordinator = new ContractsCoordinator();
-                contractsCoordinator.setName(Array.get(arrays, 0).toString());
-                contractsCoordinator.setCode(Array.get(arrays, 1).toString());
-                if (!contractCoordinatorRepository.findByName(Array.get(arrays, 0).toString()).isPresent()) {
-                    contractCoordinatorRepository.save(contractsCoordinator);
-                }
-            }
-
-        }
-    }
-
     public void saveCoordinatorsToDatabase(File file) {
         System.out.println("działa");
         List<String[]> r = null;
@@ -100,7 +78,7 @@ public class ReadCSVFileService {
                             .append("Oto Twoje hasło do systemu: ")
                             .append(password)
                             .toString();
-                    sender.sendEmailTo("dkulma@student.agh.edu.pl", "Hasło do Erasmus System", emailMessage); //TODO Change email-to
+//                    sender.sendEmailTo("dkulma@student.agh.edu.pl", "Hasło do Erasmus System", emailMessage); //TODO Change email-to
                 }
             }
         }
@@ -225,7 +203,6 @@ public class ReadCSVFileService {
 
         for (String[] arrays : r) {
             if (listIndex++ > 0) {
-
                 List<String> agreements = Arrays.asList(Array.get(arrays, map2.get("Umowa 1")).toString(),
                         Array.get(arrays, map2.get("Umowa 2")).toString(),
                         Array.get(arrays, map2.get("Umowa 3")).toString());
