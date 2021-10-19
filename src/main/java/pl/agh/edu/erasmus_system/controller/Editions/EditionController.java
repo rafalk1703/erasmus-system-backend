@@ -202,7 +202,7 @@ public class EditionController {
             try {
                 readCSVFileService.saveCoordinatorsToDatabase(coordinatorsConvertedFile);
                 readCSVFileService.saveContractsToDatabase(contractsConvertedFile, editionYear);
-                readCSVFileService.saveRegistrationsToDatabase2(registrationsConvertedFile, editionYear);
+                readCSVFileService.saveRegistrationsToDatabase(registrationsConvertedFile, editionYear);
                 coordinatorsConvertedFile.delete();
                 contractsConvertedFile.delete();
                 registrationsConvertedFile.delete();
@@ -235,7 +235,7 @@ public class EditionController {
         File registrationsConvertedFile = FileUtils.convert(editEditionFile);
         if (!editEditionFile.isEmpty()) {
             try {
-                readCSVFileService.updateRegistrations2(registrationsConvertedFile, editionId);
+                readCSVFileService.updateRegistrations(registrationsConvertedFile, editionId);
                 registrationsConvertedFile.delete();
 
                 return new ResponseEntity<>(HttpStatus.OK);

@@ -177,7 +177,7 @@ public class ReadCSVFileService {
         }
     }
 
-    public void saveRegistrationsToDatabase2(File file, String year) {
+    public void saveRegistrationsToDatabase(File file, String year) {
         List<String[]> r = null;
         try (CSVReader reader = new CSVReader(new FileReader(file))) {
             r = reader.readAll();
@@ -273,7 +273,7 @@ public class ReadCSVFileService {
         }
     }
 
-    public void updateRegistrations2(File file, long id) {
+    public void updateRegistrations(File file, long id) {
         List<String[]> r = null;
         try (CSVReader reader = new CSVReader(new FileReader(file))) {
             r = reader.readAll();

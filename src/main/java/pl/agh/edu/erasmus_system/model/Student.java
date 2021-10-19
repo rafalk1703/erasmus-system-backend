@@ -60,4 +60,7 @@ public class Student {
 
     @Column(nullable = false)
     private String ifCompletedSemester;
+
+    @Column(nullable = false)
+    private String Address;
 }
