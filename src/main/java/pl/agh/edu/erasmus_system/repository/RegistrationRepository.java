@@ -42,4 +42,6 @@ public interface RegistrationRepository extends CrudRepository<Registration, Lon
     List<Registration> findAllByContract_Edition_IdAndIsAccepted(long editionId);
 
     Optional<Registration> findByStudent_IdAndPriority(long studentId, Integer priority);
+
+    Optional<Registration> findByContractAndStudentAndPriority(Contract contract, Student student, int priority);
 }
