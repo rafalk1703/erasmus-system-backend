@@ -70,8 +70,7 @@ public class ReadCSVFileService {
                     String emailMessage = new StringBuilder()
                             .append("Witamy w Erasmus System! ")
                             .append(domainName)
-                            .append("/login?email=")
-                            .append("email") //TODO Add email variable
+                            .append("/")
                             .append(System.lineSeparator())
                             .append("Zostało utworzone Twoje konto")
                             .append(System.lineSeparator())
