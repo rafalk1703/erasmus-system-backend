@@ -61,7 +61,7 @@ public class GeneratePdfFileService {
         Context context = new Context();
         List<Registration> acceptedRegistrations = registrationRepository
                 .findAllByContract_Edition_IdAndIsAccepted(editionId)
-                .stream().filter(registration -> !registration.getStudent().getDepartment().equals("WIEIT"))
+                .stream().filter(registration -> !registration.getStudent().getDepartment().toUpperCase().equals("WIEIT"))
                 .collect(Collectors.toList());
         System.out.println(acceptedRegistrations.size());
         Map<Student, String> acceptedStudents = acceptedRegistrations.stream()
