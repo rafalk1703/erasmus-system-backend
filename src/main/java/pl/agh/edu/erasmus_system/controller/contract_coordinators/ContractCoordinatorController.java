@@ -142,13 +142,11 @@ public class ContractCoordinatorController {
     }
 
     @RequestMapping(value = "/allContractCoordinatorsView", method = RequestMethod.GET)
-    public ResponseEntity getAllContractCoordinators(@RequestHeader("Session-Code") String sessionCode) {
+    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinators(@RequestHeader("Session-Code") String sessionCode) {
 
-        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
-        coordinator.setIfAccepted(true);
-        contractCoordinatorRepository.save(coordinator);
+        List<ContractsCoordinator> contractsCoordinators = contractCoordinatorRepository.findAll();
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return getContractCoordinatorResponseEntity(sessionCode, contractsCoordinators);
     }
 
     @RequestMapping(value = "/allContractCoordinatorsView/{edition_id}", method = RequestMethod.GET)
