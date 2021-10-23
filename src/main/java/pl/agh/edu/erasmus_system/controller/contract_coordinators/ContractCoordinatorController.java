@@ -21,6 +21,7 @@ import pl.agh.edu.erasmus_system.service.EmailSender;
 import pl.agh.edu.erasmus_system.service.SessionService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/")
@@ -115,8 +116,9 @@ public class ContractCoordinatorController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/notify", method = RequestMethod.GET)
-    public ResponseEntity notifyAllCoordinators(@RequestHeader("Session-Code") String sessionCode) {
+    @RequestMapping(value = "/notifyAll/{edition_id}", method = RequestMethod.GET)
+    public ResponseEntity notifyAllCoordinators(@PathVariable("edition_id") long editionId,
+                                                @RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
 
@@ -124,7 +126,16 @@ public class ContractCoordinatorController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        List<ContractsCoordinator> noAcceptedCoordinators = contractCoordinatorRepository.findByIfAcceptedIsFalse();
+        List<Contract> contractsByEdition = contractRepository.findByEdition_Id(editionId);
+        Set<ContractsCoordinator> contractsCoordinators = new LinkedHashSet<>();
+
+        for (Contract contract : contractsByEdition) {
+            contractsCoordinators.add(contract.getContractsCoordinator());
+        }
+
+        List<ContractsCoordinator> noAcceptedCoordinators = contractsCoordinators.stream()
+                .filter(contractsCoordinator -> contractsCoordinator.getIfAccepted().equals(false))
+                .collect(Collectors.toList());
 
         for (ContractsCoordinator contractsCoordinator : noAcceptedCoordinators) {
             String contractsCoordinatorEmail = contractsCoordinator.getEmail();
