@@ -60,6 +60,7 @@ public class ReadCSVFileService {
                     contractsCoordinator.setCode(Array.get(arrays, 1).toString());
                     contractsCoordinator.setRole(CoordinatorRole.CONTRACTS);
                     contractsCoordinator.setEmail(Array.get(arrays, 2).toString());
+                    contractsCoordinator.setIfAccepted(false);
 
                     String password = PasswordManagement.generatePassword();
                     contractsCoordinator.setHash(PasswordManagement.generateHash(password));

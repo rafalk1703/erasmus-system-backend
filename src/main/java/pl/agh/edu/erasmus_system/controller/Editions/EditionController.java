@@ -8,10 +8,12 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.agh.edu.erasmus_system.Utils.FileUtils;
 import pl.agh.edu.erasmus_system.controller.Editions.response_bodies.EditionStatisticsResponseBody;
 import pl.agh.edu.erasmus_system.model.*;
+import pl.agh.edu.erasmus_system.repository.ContractCoordinatorRepository;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
 import pl.agh.edu.erasmus_system.repository.EditionRepository;
 import pl.agh.edu.erasmus_system.repository.RegistrationRepository;
 import pl.agh.edu.erasmus_system.service.ReadCSVFileService;
+import pl.agh.edu.erasmus_system.service.RegistrationService;
 import pl.agh.edu.erasmus_system.service.SessionService;
 
 import java.io.File;
@@ -33,10 +35,16 @@ public class EditionController {
     private ContractRepository contractRepository;
 
     @Autowired
+    private ContractCoordinatorRepository contractCoordinatorRepository;
+
+    @Autowired
     private RegistrationRepository registrationRepository;
 
     @Autowired
     private SessionService sessionService;
+
+    @Autowired
+    private RegistrationService registrationService;
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public ResponseEntity<List<Edition>> getEditions(@RequestHeader("Session-Code") String sessionCode) {
@@ -158,6 +166,19 @@ public class EditionController {
         }
 
         Edition deactivatedEdition = editionRepository.findById(editionId).get();
+
+        List<Contract> contractsByEdition = contractRepository.findByEdition_Id(editionId);
+        Set<ContractsCoordinator> contractsCoordinators = new LinkedHashSet<>();
+
+        for (Contract contract : contractsByEdition) {
+            contractsCoordinators.add(contract.getContractsCoordinator());
+        }
+
+        for (ContractsCoordinator contractsCoordinator : contractsCoordinators) {
+            contractsCoordinator.setIfAccepted(false);
+            contractCoordinatorRepository.save(contractsCoordinator);
+        }
+
         deactivatedEdition.setIsActive(false);
         editionRepository.save(deactivatedEdition);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -176,6 +197,21 @@ public class EditionController {
         deactivatedEdition.setIsActive(true);
         editionRepository.save(deactivatedEdition);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/ifCanDownload/{edition_id}/{if_wieit}", method = RequestMethod.GET)
+    public ResponseEntity<String> checkIfCanDownload(@PathVariable("edition_id") long editionId,
+                                             @PathVariable("if_wieit") String if_wieit,
+                                          @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
+        if (registrationService.checkIfEachStudentIsAcceptedForMax1Contract(Boolean.parseBoolean(if_wieit), editionId))
+            return new ResponseEntity<>("true", HttpStatus.OK);
+        return new ResponseEntity<>("false", HttpStatus.OK);
     }
 
     @RequestMapping(value = "/add", method= RequestMethod.POST)

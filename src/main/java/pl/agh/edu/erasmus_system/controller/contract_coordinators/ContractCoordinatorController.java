@@ -17,6 +17,7 @@ import pl.agh.edu.erasmus_system.model.Session;
 import pl.agh.edu.erasmus_system.repository.ContractCoordinatorRepository;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
 import pl.agh.edu.erasmus_system.repository.SessionRepository;
+import pl.agh.edu.erasmus_system.service.EmailSender;
 import pl.agh.edu.erasmus_system.service.SessionService;
 
 import java.util.*;
@@ -76,12 +77,78 @@ public class ContractCoordinatorController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/acceptContracts", method = RequestMethod.GET)
+    public ResponseEntity coordinatorAcceptsContracts(@RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        coordinator.setIfAccepted(true);
+        contractCoordinatorRepository.save(coordinator);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/notify/{coordinator_id}", method = RequestMethod.GET)
+    public ResponseEntity notifyCoordinator(@PathVariable("coordinator_id") long coordinatorId,
+                                                      @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+
+        if (contractCoordinatorRepository.findById(coordinatorId).isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        ContractsCoordinator contractsCoordinator = contractCoordinatorRepository.findById(coordinatorId).get();
+
+        String contractsCoordinatorEmail = contractsCoordinator.getEmail();
+        EmailSender sender = EmailSender.getSender();
+        String emailMessage = new StringBuilder()
+                .append("Witamy w Erasmus System! ")
+                .append(System.lineSeparator())
+                .append("Przypominamy o nominowaniu studentów w systemie Erasmus")
+                .toString();
+//                    sender.sendEmailTo("dkulma@student.agh.edu.pl", "Powiadomienie z Erasmus System", emailMessage); //TODO Change email-to
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/notify", method = RequestMethod.GET)
+    public ResponseEntity notifyAllCoordinators(@RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        List<ContractsCoordinator> noAcceptedCoordinators = contractCoordinatorRepository.findByIfAcceptedIsFalse();
+
+        for (ContractsCoordinator contractsCoordinator : noAcceptedCoordinators) {
+            String contractsCoordinatorEmail = contractsCoordinator.getEmail();
+            EmailSender sender = EmailSender.getSender();
+            String emailMessage = new StringBuilder()
+                    .append("Witamy w Erasmus System! ")
+                    .append(System.lineSeparator())
+                    .append("Przypominamy o nominowaniu studentów w systemie Erasmus")
+                    .toString();
+//                    sender.sendEmailTo("dkulma@student.agh.edu.pl", "Powiadomienie z Erasmus System", emailMessage); //TODO Change email-to
+        }
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/allContractCoordinatorsView", method = RequestMethod.GET)
-    public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinators(@RequestHeader("Session-Code") String sessionCode) {
+    public ResponseEntity getAllContractCoordinators(@RequestHeader("Session-Code") String sessionCode) {
 
-        List<ContractsCoordinator> contractsCoordinators = contractCoordinatorRepository.findAll();
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        coordinator.setIfAccepted(true);
+        contractCoordinatorRepository.save(coordinator);
 
-        return getContractCoordinatorResponseEntity(sessionCode, contractsCoordinators);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/allContractCoordinatorsView/{edition_id}", method = RequestMethod.GET)
@@ -113,7 +180,8 @@ public class ContractCoordinatorController {
                             contractsCoordinator.getId(),
                             contractsCoordinator.getName(),
                             contractsCoordinator.getEmail(),
-                            contractsCoordinator.getCode()
+                            contractsCoordinator.getCode(),
+                            contractsCoordinator.getIfAccepted()
                     );
             response.add(single);
         }

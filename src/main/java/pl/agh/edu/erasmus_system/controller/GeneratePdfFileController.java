@@ -4,6 +4,7 @@ import com.lowagie.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.agh.edu.erasmus_system.service.GeneratePdfFileService;
+import pl.agh.edu.erasmus_system.service.RegistrationService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -19,8 +20,14 @@ public class GeneratePdfFileController {
     @Autowired
     private GeneratePdfFileService generatePdfFileService;
 
+    @Autowired
+    private RegistrationService registrationService;
+
     @RequestMapping(value="/generate/{edition_id}", method= RequestMethod.GET)
     public void downloadPDF(HttpServletResponse response, @PathVariable("edition_id") long editionId) {
+
+        if (!registrationService.checkIfEachStudentIsAcceptedForMax1Contract(false, editionId))
+            return;
 
         try {
             Path file = Paths.get(generatePdfFileService.generatePdf(editionId).getAbsolutePath());
@@ -39,6 +46,9 @@ public class GeneratePdfFileController {
 
     @RequestMapping(value="/generate/WIEIT/{edition_id}", method= RequestMethod.GET)
     public void downloadPDFWIEIT(HttpServletResponse response, @PathVariable("edition_id") long editionId) {
+
+        if (!registrationService.checkIfEachStudentIsAcceptedForMax1Contract(true, editionId))
+            return;
 
         try {
             Path file = Paths.get(generatePdfFileService.generatePdfWIEIT(editionId).getAbsolutePath());

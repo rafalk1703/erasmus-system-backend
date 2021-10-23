@@ -10,5 +10,6 @@ public class ContractCoordinatorSingleResponseBody {
     private String name;
     private String email;
     private String code;
+    private Boolean ifAccepted;
 
 }

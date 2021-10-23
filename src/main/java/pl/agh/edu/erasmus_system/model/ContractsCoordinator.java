@@ -35,4 +35,7 @@ public class ContractsCoordinator {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CoordinatorRole role;
+
+    @Column(nullable = false)
+    private Boolean ifAccepted;
 }

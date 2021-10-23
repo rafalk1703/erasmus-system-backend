@@ -27,6 +27,7 @@ public class DepartmentCoordinatorAccountCreator implements ApplicationRunner {
             coordinator.setRole(CoordinatorRole.DEPARTMENT);
             coordinator.setName("Department coordinator");
             coordinator.setCode("DC");
+            coordinator.setIfAccepted(false);
 
             coordinatorRepository.save(coordinator);
         }
