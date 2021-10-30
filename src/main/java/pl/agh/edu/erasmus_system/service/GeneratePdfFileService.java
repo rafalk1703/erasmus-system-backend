@@ -63,7 +63,6 @@ public class GeneratePdfFileService {
                 .findAllByContract_Edition_IdAndIsAccepted(editionId)
                 .stream().filter(registration -> !registration.getStudent().getDepartment().toUpperCase().equals("WIEIT"))
                 .collect(Collectors.toList());
-        System.out.println(acceptedRegistrations.size());
         Map<Student, String> acceptedStudents = acceptedRegistrations.stream()
                 .collect(Collectors.toMap(Registration::getStudent, registration -> registration.getContract().getErasmusCode() +
                         " (" +registration.getContract().getContractsCoordinator().getCode() + ")"));
@@ -77,7 +76,6 @@ public class GeneratePdfFileService {
                 .findAllByContract_Edition_IdAndIsAccepted(editionId)
                 .stream().filter(registration -> registration.getStudent().getDepartment().toUpperCase().equals("WIEIT"))
                 .collect(Collectors.toList());
-        System.out.println(acceptedRegistrations.size());
         Map<Student, String> acceptedStudents = acceptedRegistrations.stream()
                 .collect(Collectors.toMap(Registration::getStudent, registration -> registration.getContract().getErasmusCode() +
                         " (" +registration.getContract().getContractsCoordinator().getCode() + ")"));

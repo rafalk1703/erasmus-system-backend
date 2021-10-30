@@ -43,7 +43,6 @@ public class ReadCSVFileService {
     public String domainName;
 
     public void saveCoordinatorsToDatabase(File file) {
-        System.out.println("działa");
         List<String[]> r = null;
         try (CSVReader reader = new CSVReader(new FileReader(file))) {
             r = reader.readAll();

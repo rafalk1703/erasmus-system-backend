@@ -183,7 +183,6 @@ public class ContractCoordinatorController {
         ContractCoordinatorResponseBody response = new ContractCoordinatorResponseBody();
 
         for (ContractsCoordinator contractsCoordinator : contractsCoordinators) {
-            System.out.println(contractsCoordinator.getCode());
             ContractCoordinatorSingleResponseBody single =
                     new ContractCoordinatorSingleResponseBody(
                             contractsCoordinator.getId(),

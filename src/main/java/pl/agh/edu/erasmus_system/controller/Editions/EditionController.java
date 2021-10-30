@@ -254,8 +254,6 @@ public class EditionController {
 
         if (!editionRepository.findByIsActiveIsTrue().isEmpty())
             return new ResponseEntity<>("Only one edition can be active", HttpStatus.NOT_ACCEPTABLE);
-        System.out.println("dzialaEndpoint");
-        System.out.println(coordinatorsFile.getName());
         File coordinatorsConvertedFile = FileUtils.convert(coordinatorsFile);
         File contractsConvertedFile = FileUtils.convert(contractsFile);
         File registrationsConvertedFile = FileUtils.convert(registrationsFile);
@@ -288,11 +286,9 @@ public class EditionController {
             return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
         }
 
-        System.out.println("update1");
         if (!editionRepository.findById(editionId).get().getIsActive())
             return new ResponseEntity<>("You cannot edit inactive edition", HttpStatus.NOT_ACCEPTABLE);
 
-        System.out.println("update");
         File registrationsConvertedFile = FileUtils.convert(editEditionFile);
         if (!editEditionFile.isEmpty()) {
             try {
