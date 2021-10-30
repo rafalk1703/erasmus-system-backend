@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.agh.edu.erasmus_system.Utils.FileUtils;
 import pl.agh.edu.erasmus_system.controller.Editions.response_bodies.EditionStatisticsResponseBody;
+import pl.agh.edu.erasmus_system.controller.Editions.response_bodies.IfCanDownloadEditionResponseBody;
+import pl.agh.edu.erasmus_system.controller.Editions.response_bodies.IfCanDownloadEditionSingleResponseBody;
 import pl.agh.edu.erasmus_system.model.*;
 import pl.agh.edu.erasmus_system.repository.ContractCoordinatorRepository;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
@@ -212,6 +214,30 @@ public class EditionController {
         if (registrationService.checkIfEachStudentIsAcceptedForMax1Contract(Boolean.parseBoolean(if_wieit), editionId))
             return new ResponseEntity<>("true", HttpStatus.OK);
         return new ResponseEntity<>("false", HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/editions/ifCanDownload", method = RequestMethod.GET)
+    public ResponseEntity<IfCanDownloadEditionResponseBody> checkIfCanDownload(@RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null || !coordinator.getRole().equals(CoordinatorRole.DEPARTMENT)) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
+        List<Edition> allEditions = editionRepository.findAll();
+
+        IfCanDownloadEditionResponseBody responseBody = new IfCanDownloadEditionResponseBody();
+
+        for (Edition edition : allEditions) {
+            IfCanDownloadEditionSingleResponseBody singleResponseBody =
+                    new IfCanDownloadEditionSingleResponseBody(edition.getId(),
+                            String.valueOf(registrationService.checkIfEachStudentIsAcceptedForMax1Contract(false, edition.getId())),
+                            String.valueOf(registrationService.checkIfEachStudentIsAcceptedForMax1Contract(true, edition.getId())));
+            responseBody.add(singleResponseBody);
+
+        }
+
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/add", method= RequestMethod.POST)
