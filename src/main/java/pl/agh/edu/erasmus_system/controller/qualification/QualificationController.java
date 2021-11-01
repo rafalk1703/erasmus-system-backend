@@ -117,6 +117,9 @@ public class QualificationController {
                     switch (coordinator.getRole()) {
                         case CONTRACTS:
                             registrationToUpdate.setIsNominated(registration.getRegistrationStatus());
+                            if (requestBody.getType().equals("confirm")) {
+                                registrationToUpdate.setIsAccepted(registration.getRegistrationStatus());
+                            }
                             break;
                         case DEPARTMENT:
                             registrationToUpdate.setIsAccepted(registration.getRegistrationStatus());

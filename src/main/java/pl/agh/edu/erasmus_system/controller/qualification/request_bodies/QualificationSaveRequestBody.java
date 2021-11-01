@@ -8,6 +8,7 @@ import java.util.ArrayList;
 @Getter
 public class QualificationSaveRequestBody extends SessionRequestBody {
     private ArrayList<RegistrationRequestBody> registrations;
+    private String type;
 
     public QualificationSaveRequestBody() {
     }
