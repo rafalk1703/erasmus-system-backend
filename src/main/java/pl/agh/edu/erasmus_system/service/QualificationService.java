@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.agh.edu.erasmus_system.controller.qualification.response_bodies.QualificationStudentRegistrationsResponseBody;
 import pl.agh.edu.erasmus_system.model.Contract;
+import pl.agh.edu.erasmus_system.model.CoordinatorRole;
 import pl.agh.edu.erasmus_system.model.Registration;
 import pl.agh.edu.erasmus_system.repository.RegistrationRepository;
 
@@ -15,11 +16,15 @@ public class QualificationService {
     @Autowired
     private RegistrationRepository registrationRepository;
 
+    public long countNominatedStudentsByContract(Contract contract) {
+        return registrationRepository.countNominatedStudentsByContract(contract);
+    }
+
     public long countAcceptedStudentsByContract(Contract contract) {
         return registrationRepository.countAcceptedStudentsByContract(contract);
     }
 
-    public Map<Long,QualificationStudentRegistrationsResponseBody> determineStudentsRegistrations() {
+    public Map<Long,QualificationStudentRegistrationsResponseBody> determineStudentsRegistrations(CoordinatorRole coordinatorRole) {
         Map<Long,QualificationStudentRegistrationsResponseBody> studentsRegistrations = new HashMap<>();
 
         for (Registration registration : registrationRepository.findAll()) {
@@ -28,15 +33,34 @@ public class QualificationService {
                 QualificationStudentRegistrationsResponseBody qualificationStudentRegistrationsResponseBody =
                         new QualificationStudentRegistrationsResponseBody();
                 qualificationStudentRegistrationsResponseBody.addRegistrationId(registration.getId());
-                if (registration.getIsAccepted()) {
-                    qualificationStudentRegistrationsResponseBody.increaseAcceptedAmount();
+                switch (coordinatorRole) {
+                    case CONTRACTS:
+                        if (registration.getIsNominated()) {
+                            qualificationStudentRegistrationsResponseBody.increaseTickedAmount();
+                        }
+                        break;
+                    case DEPARTMENT:
+                        if (registration.getIsAccepted()) {
+                            qualificationStudentRegistrationsResponseBody.increaseTickedAmount();
+                        }
+                        break;
                 }
                 studentsRegistrations.put(studentId, qualificationStudentRegistrationsResponseBody);
             } else {
                 QualificationStudentRegistrationsResponseBody studentRegistrations = studentsRegistrations.get(studentId);
                 studentRegistrations.addRegistrationId(registration.getId());
-                if (registration.getIsAccepted()) {
-                    studentRegistrations.increaseAcceptedAmount();
+
+                switch (coordinatorRole) {
+                    case CONTRACTS:
+                        if (registration.getIsNominated()) {
+                            studentRegistrations.increaseTickedAmount();
+                        }
+                        break;
+                    case DEPARTMENT:
+                        if (registration.getIsAccepted()) {
+                            studentRegistrations.increaseTickedAmount();
+                        }
+                        break;
                 }
             }
         }

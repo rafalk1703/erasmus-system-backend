@@ -17,5 +17,5 @@ public class QualificationSingleResponseBody {
     private String degree;
     private Integer vacancies;
     private List<QualificationRegistrationResponseBody> registrations;
-    private Long acceptedStudentsAmount;
+    private Long tickedStudentsAmount;
 }

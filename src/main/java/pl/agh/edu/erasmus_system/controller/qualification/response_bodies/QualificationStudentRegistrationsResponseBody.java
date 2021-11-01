@@ -7,18 +7,18 @@ import java.util.ArrayList;
 @Getter
 public class QualificationStudentRegistrationsResponseBody {
     private ArrayList<Long> registrationsIds;
-    private Long acceptedAmount;
+    private Long tickedAmount;
 
     public QualificationStudentRegistrationsResponseBody() {
         this.registrationsIds = new ArrayList<>();
-        this.acceptedAmount = 0L;
+        this.tickedAmount = 0L;
     }
 
     public void addRegistrationId(Long registrationId) {
         this.registrationsIds.add(registrationId);
     }
 
-    public void increaseAcceptedAmount() {
-        this.acceptedAmount++;
+    public void increaseTickedAmount() {
+        this.tickedAmount++;
     }
 }

@@ -75,7 +75,17 @@ public class QualificationController {
                 registrationResponseBody.add(new QualificationRegistrationResponseBody(registration));
             }
 
-            long acceptedStudentsAmount = qualificationService.countAcceptedStudentsByContract(contract);
+            long tickedStudentsAmount;
+            switch (coordinator.getRole()) {
+                case CONTRACTS:
+                    tickedStudentsAmount = qualificationService.countNominatedStudentsByContract(contract);
+                    break;
+                case DEPARTMENT:
+                    tickedStudentsAmount = qualificationService.countAcceptedStudentsByContract(contract);
+                    break;
+                default:
+                    tickedStudentsAmount = 0;
+            }
 
             QualificationSingleResponseBody single = new QualificationSingleResponseBody(
                     contract.getId(),
@@ -84,11 +94,11 @@ public class QualificationController {
                     contract.getDegree(),
                     contract.getVacancies(),
                     registrationResponseBody,
-                    acceptedStudentsAmount);
+                    tickedStudentsAmount);
             response.addContract(single);
         }
 
-        response.setStudentsRegistrations(qualificationService.determineStudentsRegistrations());
+        response.setStudentsRegistrations(qualificationService.determineStudentsRegistrations(coordinator.getRole()));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
