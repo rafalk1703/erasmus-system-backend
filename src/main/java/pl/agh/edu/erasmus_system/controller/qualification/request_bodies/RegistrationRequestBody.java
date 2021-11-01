@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class RegistrationRequestBody {
     private Long registrationId;
-    private Boolean acceptanceStatus;
+    private Boolean registrationStatus;
 
     public RegistrationRequestBody() {
     }

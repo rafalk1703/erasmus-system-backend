@@ -1,8 +1,8 @@
 INSERT INTO public.edition (id, year, is_active) VALUES (1, '2020-2021', true);
 INSERT INTO public.edition (id, year, is_active) VALUES (2, '2019-2020', false);
 
-INSERT INTO public.contract_coordinators (id, code, email, hash, name, role) VALUES (1,'PK', 'pkowalski@agh.edu.pl', '$2a$10$gqHo720culqp8hsfri456eurdjKS0d3GGvJbCjZ3oN8oSfwGgHxPy', 'dr inż. Piotr Kowalski', 'CONTRACTS');
-INSERT INTO public.contract_coordinators (id, code, email, hash, name, role) VALUES (2,'JD', 'jdabrowski@agh.edu.pl', '$2a$10$ORgOrDRlvY8.bo19/nl9UurHUOU6wXoryXzq4xGHL3fEvM1RaAfTu', 'dr hab. inż. Jan Dąbrowski', 'CONTRACTS');
+INSERT INTO public.contract_coordinators (id, code, email, hash, name, role, if_accepted) VALUES (1,'PK', 'pkowalski@agh.edu.pl', '$2a$10$gqHo720culqp8hsfri456eurdjKS0d3GGvJbCjZ3oN8oSfwGgHxPy', 'dr inż. Piotr Kowalski', 'CONTRACTS', false); -- hasło: abc123
+INSERT INTO public.contract_coordinators (id, code, email, hash, name, role, if_accepted) VALUES (2,'JD', 'jdabrowski@agh.edu.pl', '$2a$10$ORgOrDRlvY8.bo19/nl9UurHUOU6wXoryXzq4xGHL3fEvM1RaAfTu', 'dr hab. inż. Jan Dąbrowski', 'CONTRACTS', false); -- hasło: 123abc
 
 INSERT INTO public.students (id, department, email, field, name, surname, year, phone_number, period_of_stay, earlier_participation, average_grade, exam_level, type_of_certificate, foreign_language, address) VALUES (1, 'WIEiT', 'lbaran@student.agh.edu.pl', 'Informatyka', 'Łukasz', 'Baran', '2', '123-456-789', '1-2', 'Nie', '4.5', 'B2', 'FCE', 'Angielski', 'ul. Armii Krajowej 2/10, Kraków');
 INSERT INTO public.students (id, department, email, field, name, surname, year, phone_number, period_of_stay, earlier_participation, average_grade, exam_level, type_of_certificate, foreign_language, address) VALUES (2, 'WIEiT', 'kkowalski@student.agh.edu.pl', 'Informatyka', 'Krzysztof', 'Kowalski', '2', '123-456-789', '1-2', 'Nie', '4.5', 'B2', 'FCE', 'Angielski', 'ul. Armii Krajowej 2/10, Kraków');

@@ -104,7 +104,14 @@ public class QualificationController {
         requestBody.getRegistrations().forEach(
                registration -> {
                     Registration registrationToUpdate = registrationRepository.findById(registration.getRegistrationId()).get();
-                    registrationToUpdate.setIsAccepted(registration.getAcceptanceStatus());
+                    switch (coordinator.getRole()) {
+                        case CONTRACTS:
+                            registrationToUpdate.setIsNominated(registration.getRegistrationStatus());
+                            break;
+                        case DEPARTMENT:
+                            registrationToUpdate.setIsAccepted(registration.getRegistrationStatus());
+                            break;
+                    }
                     registrationRepository.save(registrationToUpdate);
                }
         );
