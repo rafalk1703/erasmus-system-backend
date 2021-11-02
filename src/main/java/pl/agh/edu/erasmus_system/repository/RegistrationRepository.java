@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import pl.agh.edu.erasmus_system.model.Contract;
+import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
 import pl.agh.edu.erasmus_system.model.Registration;
 import pl.agh.edu.erasmus_system.model.Student;
 
@@ -54,4 +55,14 @@ public interface RegistrationRepository extends CrudRepository<Registration, Lon
     Optional<Registration> findByStudent_IdAndPriority(long studentId, Integer priority);
 
     Optional<Registration> findByContractAndStudentAndPriority(Contract contract, Student student, int priority);
+
+    @Query("select r from Registrations r " +
+            "left join Contracts c on r.contract = c " +
+            "where c.edition.id = ?1")
+    List<Registration> findByEditionId(long editionId);
+
+    @Query("select r from Registrations r " +
+            "left join Contracts c on r.contract = c " +
+            "where c.edition.id = ?1 and c.contractsCoordinator = ?2")
+    List<Registration> findByEditionIdAndCoordinator(long editionId, ContractsCoordinator coordinator);
 }

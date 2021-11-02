@@ -8,14 +8,13 @@ public class QualificationRegistrationResponseBody {
     private Long id;
     private QualificationStudentResponseBody student;
     private Integer priority;
-    private Boolean isNominated;
-    private Boolean isAccepted;
+    private Boolean registrationStatus;
 
-    public QualificationRegistrationResponseBody(Registration registration) {
-        this.id =  registration.getId();
-        this.student = new QualificationStudentResponseBody(registration.getStudent());
-        this.priority = registration.getPriority();
-        this.isNominated = registration.getIsNominated();
-        this.isAccepted = registration.getIsAccepted();
+    public QualificationRegistrationResponseBody(Long registrationId, QualificationStudentResponseBody student,
+                                                 Integer priority, Boolean registrationStatus) {
+        this.id =  registrationId;
+        this.student = student;
+        this.priority = priority;
+        this.registrationStatus = registrationStatus;
     }
 }

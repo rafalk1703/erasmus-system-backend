@@ -72,7 +72,20 @@ public class QualificationController {
 
             List<QualificationRegistrationResponseBody> registrationResponseBody = new ArrayList<>();
             for (Registration registration : registrationRepository.getALLRegistrationsByContract(contract)) {
-                registrationResponseBody.add(new QualificationRegistrationResponseBody(registration));
+                Boolean registrationStatus = false;
+                switch (coordinator.getRole()) {
+                    case CONTRACTS:
+                        registrationStatus = registration.getIsNominated();
+                        break;
+                    case DEPARTMENT:
+                        registrationStatus = registration.getIsAccepted();
+                }
+                registrationResponseBody.add(new QualificationRegistrationResponseBody(
+                        registration.getId(),
+                        new QualificationStudentResponseBody(registration.getStudent()),
+                        registration.getPriority(),
+                        registrationStatus
+                ));
             }
 
             long tickedStudentsAmount;
@@ -98,7 +111,7 @@ public class QualificationController {
             response.addContract(single);
         }
 
-        response.setStudentsRegistrations(qualificationService.determineStudentsRegistrations(coordinator.getRole()));
+        response.setStudentsRegistrations(qualificationService.determineStudentsRegistrations(editionId, coordinator));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -117,7 +130,7 @@ public class QualificationController {
                     switch (coordinator.getRole()) {
                         case CONTRACTS:
                             registrationToUpdate.setIsNominated(registration.getRegistrationStatus());
-                            if (requestBody.getType().equals("confirm")) {
+                            if (requestBody.getTypeOfSaving().equals("confirm")) {
                                 registrationToUpdate.setIsAccepted(registration.getRegistrationStatus());
                             }
                             break;
