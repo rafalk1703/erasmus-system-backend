@@ -21,6 +21,7 @@ import pl.agh.edu.erasmus_system.service.EmailSender;
 import pl.agh.edu.erasmus_system.service.SessionService;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RestController
@@ -195,4 +196,34 @@ public class ContractCoordinatorController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/ifAccepted", method = RequestMethod.GET)
+    public ResponseEntity<Boolean> ifAccepted(@RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+
+        return new ResponseEntity<>(coordinator.getIfAccepted(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/ifHasContracts/{edition_id}", method = RequestMethod.GET)
+    public ResponseEntity<Boolean> ifHasContracts(@PathVariable("edition_id") long editionId,
+                                                  @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+
+        List<Contract> contractsByEdition = contractRepository.findByEdition_Id(editionId);
+
+        Set<ContractsCoordinator> contractsCoordinators = new LinkedHashSet<>();
+
+        for (Contract contract : contractsByEdition) {
+            contractsCoordinators.add(contract.getContractsCoordinator());
+        }
+
+        if (contractsCoordinators.stream().map(ContractsCoordinator::getCode).noneMatch(code -> code.equals(coordinator.getCode()))) {
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
 }
