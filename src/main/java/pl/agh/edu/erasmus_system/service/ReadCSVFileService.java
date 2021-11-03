@@ -115,8 +115,8 @@ public class ReadCSVFileService {
                     contract.setContractsCoordinator(contractsCoordinator);
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 7).toString()));
-                    contract.setDegree("1st");
-                    if (contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), edition, "1st").isEmpty()) {
+                    contract.setDegree("Ist");
+                    if (contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), edition, "Ist").isEmpty()) {
                         contractRepository.save(contract);
                     }
                 }
@@ -131,8 +131,8 @@ public class ReadCSVFileService {
                     contract.setContractsCoordinator(contractsCoordinator);
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 8).toString()));
-                    contract.setDegree("2st");
-                    if (contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), edition, "2st").isEmpty()) {
+                    contract.setDegree("IIst");
+                    if (contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), edition, "IIst").isEmpty()) {
                         contractRepository.save(contract);
                     }
                 }
@@ -147,8 +147,8 @@ public class ReadCSVFileService {
                     contract.setContractsCoordinator(contractsCoordinator);
                     contract.setFaculty(Array.get(arrays, 5).toString());
                     contract.setVacancies(Integer.parseInt(Array.get(arrays, 9).toString()));
-                    contract.setDegree("3st");
-                    if (contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), edition, "3st").isEmpty()) {
+                    contract.setDegree("IIIst");
+                    if (contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(contract.getErasmusCode(), contractsCoordinator.getCode(), edition, "IIIst").isEmpty()) {
                         contractRepository.save(contract);
                     }
                 }

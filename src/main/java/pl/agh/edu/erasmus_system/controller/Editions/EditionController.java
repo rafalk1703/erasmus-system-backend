@@ -133,20 +133,20 @@ public class EditionController {
 
         for (Contract contract : contracts) {
 
-            if (contract.getDegree().equals("1st") && contract.getVacancies() > 0)
+            if (contract.getDegree().equals("Ist") && contract.getVacancies() > 0)
                 numberOfContracts1Degree++;
-            if (contract.getDegree().equals("2st") && contract.getVacancies() > 0)
+            if (contract.getDegree().equals("IIst") && contract.getVacancies() > 0)
                 numberOfContracts2Degree++;
-            if (contract.getDegree().equals("3st") && contract.getVacancies() > 0)
+            if (contract.getDegree().equals("IIIst") && contract.getVacancies() > 0)
                 numberOfContracts3Degree++;
 
             for (Registration registration : registrationRepository.findByContract(contract)) {
                 numberOfRegistrations++;
-                if (contract.getDegree().equals("1st") && contract.getVacancies() > 0)
+                if (contract.getDegree().equals("Ist") && contract.getVacancies() > 0)
                     numberOfRegistrations1Degree++;
-                if (contract.getDegree().equals("2st") && contract.getVacancies() > 0)
+                if (contract.getDegree().equals("IIst") && contract.getVacancies() > 0)
                     numberOfRegistrations2Degree++;
-                if (contract.getDegree().equals("3st") && contract.getVacancies() > 0)
+                if (contract.getDegree().equals("IIIst") && contract.getVacancies() > 0)
                     numberOfRegistrations3Degree++;
             }
         }
