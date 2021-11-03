@@ -21,7 +21,7 @@ public interface RegistrationRepository extends CrudRepository<Registration, Lon
     @Query("select r from Registrations r " +
             "left join Contracts c on r.contract = c " +
             "where c = ?1 " +
-            "order by r.id")
+            "order by r.priority, r.id")
     List<Registration> getALLRegistrationsByContract(Contract contract);
   
     List<Registration> findByContract(Contract contract);
