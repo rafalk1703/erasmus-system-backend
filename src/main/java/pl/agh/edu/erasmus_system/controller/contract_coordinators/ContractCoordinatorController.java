@@ -10,12 +10,10 @@ import pl.agh.edu.erasmus_system.controller.contract_coordinators.request_bodies
 import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies.ContractCoordinatorResponseBody;
 import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies.ContractCoordinatorSingleResponseBody;
 import pl.agh.edu.erasmus_system.controller.contract_coordinators.response_bodies.LoginResponseBody;
-import pl.agh.edu.erasmus_system.model.Contract;
-import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
-import pl.agh.edu.erasmus_system.model.CoordinatorRole;
-import pl.agh.edu.erasmus_system.model.Session;
+import pl.agh.edu.erasmus_system.model.*;
 import pl.agh.edu.erasmus_system.repository.ContractCoordinatorRepository;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
+import pl.agh.edu.erasmus_system.repository.RegistrationRepository;
 import pl.agh.edu.erasmus_system.repository.SessionRepository;
 import pl.agh.edu.erasmus_system.service.EmailSender;
 import pl.agh.edu.erasmus_system.service.SessionService;
@@ -37,6 +35,9 @@ public class ContractCoordinatorController {
 
     @Autowired
     private SessionRepository sessionRepository;
+
+    @Autowired
+    private RegistrationRepository registrationRepository;
 
     @Autowired
     private SessionService sessionService;
@@ -224,6 +225,41 @@ public class ContractCoordinatorController {
         }
 
         return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/ifAllContractsQualified/{edition_id}", method = RequestMethod.GET)
+    public ResponseEntity<Boolean> ifAllContractsQualified(@PathVariable("edition_id") long editionId,
+                                                           @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        List<Contract> contracts = new LinkedList<>();
+        switch (coordinator.getRole()) {
+            case CONTRACTS:
+                contracts = contractRepository.findByEditionIdAndContractsCoordinator(editionId, coordinator);
+                break;
+            case DEPARTMENT:
+                contracts = contractRepository.findByEdition_Id(editionId);
+        }
+
+        for (Contract contract: contracts) {
+            List<Registration> registrations = new LinkedList<>();
+            switch (coordinator.getRole()) {
+                case CONTRACTS:
+                    registrations = registrationRepository.findAllByContractAndIsNominated(contract);
+                    break;
+                case DEPARTMENT:
+                    registrations = registrationRepository.findAllByContractAndIsAccepted(contract);
+            }
+            if (registrations.size() < contract.getVacancies()) {
+                return new ResponseEntity<>(false, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(true, HttpStatus.OK);
+
     }
 
 }

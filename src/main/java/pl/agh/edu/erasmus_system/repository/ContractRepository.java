@@ -1,5 +1,6 @@
 package pl.agh.edu.erasmus_system.repository;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,6 +23,9 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
 
     Optional<Contract> findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(String erasmusCode, String contractCoordinatorCode, Edition edition, String degree);
 
+    @Query("select c from Contracts c " +
+            "where c.edition.id = ?1 " +
+            "order by c.id")
     List<Contract> findByEdition_Id(long editionId);
 
     List<Contract> findByEdition_Year(String editionYear);
@@ -30,5 +34,8 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
 
     List<Contract> findByEdition_IdAndContractsCoordinator_Code(long editionId, String code);
 
+    @Query("select c from Contracts c " +
+            "where c.edition.id = ?1 and c.contractsCoordinator = ?2 " +
+            "order by c.id")
     List<Contract> findByEditionIdAndContractsCoordinator(long editionId, ContractsCoordinator coordinator);
 }
