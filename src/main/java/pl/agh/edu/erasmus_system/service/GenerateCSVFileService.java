@@ -82,7 +82,7 @@ public class GenerateCSVFileService {
 
         List<Registration> acceptedRegistrations = registrationRepository
                 .findAllByContract_Edition_IdAndIsAccepted(editionId)
-                .stream().filter(registration -> !registration.getStudent().getDepartment().toUpperCase().equals("WIEIT"))
+                .stream().filter(registration -> registration.getStudent().getDepartment().toUpperCase().equals("WIEIT"))
                 .collect(Collectors.toList());
         Map<Student, String> acceptedStudents = acceptedRegistrations.stream()
                 .collect(Collectors.toMap(Registration::getStudent, registration -> registration.getContract().getErasmusCode() +
