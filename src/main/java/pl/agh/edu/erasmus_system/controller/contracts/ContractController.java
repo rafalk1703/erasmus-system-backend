@@ -64,21 +64,18 @@ public class ContractController {
         return getContractResponseEntity(contractsByEdition);
     }
 
-    @RequestMapping(value = "/changeNumberOfVacancies/{contract_id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/changeNumberOfVacancies/{contract_id}/{vacancies}", method = RequestMethod.GET)
     public ResponseEntity changeNumberOfVacancies(@PathVariable("contract_id") long contractId,
-                                                                                       @PathVariable("vacancies") Integer newNumberOfVacancies,
+                                                  @PathVariable("vacancies") int vacancies,
                                                                                        @RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
         if (coordinator == null || coordinator.getRole().equals(CoordinatorRole.CONTRACTS)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if (newNumberOfVacancies < 0) {
-            return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
-        }
 
         Contract contract = contractRepository.findById(contractId).get();
-        contract.setVacancies(newNumberOfVacancies);
+        contract.setVacancies(vacancies);
         contractRepository.save(contract);
 
         return new ResponseEntity(HttpStatus.OK);
