@@ -11,8 +11,10 @@ import pl.agh.edu.erasmus_system.model.CoordinatorRole;
 import pl.agh.edu.erasmus_system.repository.ContractRepository;
 import pl.agh.edu.erasmus_system.service.SessionService;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/")
@@ -60,6 +62,26 @@ public class ContractController {
         }
 
         return getContractResponseEntity(contractsByEdition);
+    }
+
+    @RequestMapping(value = "/changeNumberOfVacancies/{contract_id}", method = RequestMethod.POST)
+    public ResponseEntity changeNumberOfVacancies(@PathVariable("contract_id") long contractId,
+                                                                                       @PathVariable("vacancies") Integer newNumberOfVacancies,
+                                                                                       @RequestHeader("Session-Code") String sessionCode) {
+
+        ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
+        if (coordinator == null || coordinator.getRole().equals(CoordinatorRole.CONTRACTS)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        if (newNumberOfVacancies < 0) {
+            return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        Contract contract = contractRepository.findById(contractId).get();
+        contract.setVacancies(newNumberOfVacancies);
+        contractRepository.save(contract);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/allContractsView/{edition_id}/{coordinator_code}", method = RequestMethod.GET)
