@@ -67,7 +67,7 @@ public class ContractController {
                                                   @RequestBody ContractVacanciesRequestBody requestBody) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(requestBody);
-        if (coordinator == null || coordinator.getRole().equals(CoordinatorRole.CONTRACTS)) {
+        if (coordinator == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
