@@ -43,8 +43,9 @@ public class QualificationController {
      * @return OK(200) with contracts details in response body
      * UNAUTHORIZED(401) if session expired
      */
-    @RequestMapping(value = "/editionView/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/editionView/{edition_id}/{if_restore}", method = RequestMethod.GET)
     public ResponseEntity<QualificationResponseBody> getContracts(@PathVariable("edition_id") long editionId,
+                                                                  @PathVariable("if_restore") Boolean ifRestore,
                                                                   @RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
@@ -72,6 +73,10 @@ public class QualificationController {
 
             List<QualificationRegistrationResponseBody> registrationResponseBody = new ArrayList<>();
             for (Registration registration : registrationRepository.getALLRegistrationsByContract(contract)) {
+                if (ifRestore) {
+                    registration.setIsAccepted(registration.getIsNominated());
+                    registrationRepository.save(registration);
+                }
                 Boolean registrationStatus = false;
                 switch (coordinator.getRole()) {
                     case CONTRACTS:
