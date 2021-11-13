@@ -16,6 +16,7 @@ import pl.agh.edu.erasmus_system.repository.ContractRepository;
 import pl.agh.edu.erasmus_system.repository.RegistrationRepository;
 import pl.agh.edu.erasmus_system.repository.SessionRepository;
 import pl.agh.edu.erasmus_system.service.EmailSender;
+import pl.agh.edu.erasmus_system.service.QualificationService;
 import pl.agh.edu.erasmus_system.service.SessionService;
 
 import java.util.*;
@@ -41,6 +42,9 @@ public class ContractCoordinatorController {
 
     @Autowired
     private SessionService sessionService;
+
+    @Autowired
+    private QualificationService qualificationService;
 
     /**
      * @param requestBody- body of request with params: email and password
@@ -255,7 +259,20 @@ public class ContractCoordinatorController {
                     registrations = registrationRepository.findAllByContractAndIsAccepted(contract);
             }
             if (registrations.size() < contract.getVacancies()) {
-                return new ResponseEntity<>(false, HttpStatus.OK);
+                for (Registration registration: registrations) {
+                    Boolean registrationStatus = false;
+                    switch (coordinator.getRole()) {
+                        case CONTRACTS:
+                            registrationStatus = registration.getIsNominated();
+                            break;
+                        case DEPARTMENT:
+                            registrationStatus = registration.getIsAccepted();
+                    }
+                    if (!registrationStatus &&
+                            qualificationService.determineStudentsRegistrations(editionId, coordinator).get(registration.getStudent().getId()).getTickedAmount() < 1) {
+                        return new ResponseEntity<>(false, HttpStatus.OK);
+                    }
+                }
             }
         }
         return new ResponseEntity<>(true, HttpStatus.OK);
