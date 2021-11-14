@@ -8,10 +8,12 @@ import java.util.*;
 public class QualificationResponseBody {
     private List<QualificationSingleResponseBody> contracts;
     private Map<Long,QualificationStudentRegistrationsResponseBody> studentsRegistrations;
+    private Long conflictsAmount;
 
     public QualificationResponseBody() {
         this.contracts = new ArrayList<>();
         this.studentsRegistrations = new HashMap<>();
+        this.conflictsAmount = 0L;
     }
 
     public void addContract(QualificationSingleResponseBody contract) {
@@ -22,11 +24,19 @@ public class QualificationResponseBody {
         this.studentsRegistrations = studentsRegistrations;
     }
 
+    public void setConflictsAmount(Long conflictsAmount) {
+        this.conflictsAmount = conflictsAmount;
+    }
+
     public List<QualificationSingleResponseBody> getContracts() {
         return contracts;
     }
 
     public Map<Long,QualificationStudentRegistrationsResponseBody> getStudentsRegistrations() {
         return studentsRegistrations;
+    }
+
+    public Long getConflictsAmount() {
+        return conflictsAmount;
     }
 }

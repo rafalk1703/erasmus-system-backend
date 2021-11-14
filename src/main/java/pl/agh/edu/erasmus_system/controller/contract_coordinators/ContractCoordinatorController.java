@@ -259,6 +259,7 @@ public class ContractCoordinatorController {
                     registrations = registrationRepository.findAllByContractAndIsAccepted(contract);
             }
             if (registrations.size() < contract.getVacancies()) {
+                registrations = registrationRepository.findByContract(contract);
                 for (Registration registration: registrations) {
                     Boolean registrationStatus = false;
                     switch (coordinator.getRole()) {
@@ -276,7 +277,6 @@ public class ContractCoordinatorController {
             }
         }
         return new ResponseEntity<>(true, HttpStatus.OK);
-
     }
 
 }

@@ -118,6 +118,14 @@ public class QualificationController {
 
         response.setStudentsRegistrations(qualificationService.determineStudentsRegistrations(editionId, coordinator));
 
+        Long conflictsAmount = 0L;
+        for (QualificationStudentRegistrationsResponseBody r: response.getStudentsRegistrations().values()) {
+            if (r.getTickedAmount() > 1) {
+                conflictsAmount++;
+            }
+        }
+        response.setConflictsAmount(conflictsAmount);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
