@@ -25,11 +25,13 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query("select distinct r.student from Registrations r " +
             "left join Contracts c on r.contract = c " +
-            "where c.edition.id = ?1")
+            "where c.edition.id = ?1 " +
+            "order by r.student.name, r.student.surname")
     List<Student> findStudentsByEditionId(long editionId);
 
     @Query("select distinct r.student from Registrations r " +
             "left join Contracts c on r.contract = c " +
-            "where c.edition.id = ?1 and c.contractsCoordinator = ?2")
+            "where c.edition.id = ?1 and c.contractsCoordinator = ?2 " +
+            "order by r.student.name, r.student.surname")
     List<Student> findStudentsByEditionAndCoordinator(long editionId, ContractsCoordinator coordinator);
 }
