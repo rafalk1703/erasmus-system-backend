@@ -207,6 +207,10 @@ public class ContractCoordinatorController {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
 
+        if (coordinator == null) {
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+
         return new ResponseEntity<>(coordinator.getIfAccepted(), HttpStatus.OK);
     }
 
