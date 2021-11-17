@@ -2,7 +2,7 @@ package pl.agh.edu.erasmus_system.Utils;
 
 import pl.agh.edu.erasmus_system.model.Session;
 import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
-import pl.agh.edu.erasmus_system.repository.SessionRepository;
+import pl.agh.edu.erasmus_system.repositories.SessionRepository;
 
 import java.security.SecureRandom;
 import java.sql.Date;
