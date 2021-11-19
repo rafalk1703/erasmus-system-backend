@@ -363,8 +363,8 @@ public class ReadCSVFileService {
                         student.setSurname(Array.get(arrays, map2.get("Nawisko")).toString());
                     if (!student.getDepartment().equals(Array.get(arrays, map2.get("Wydział")).toString()))
                         student.setDepartment(Array.get(arrays, map2.get("Wydział")).toString());
-//                    Jeżeli student zmienia rok to zmienia wszystkie umowy
-                    if (!student.getYear().equals(Array.get(arrays, map2.get("Rok")).toString())) {
+//                    Jeżeli student zmienia degree to zmienia wszystkie umowy
+                    if (!getDegreeFromYear(student.getYear()).equals(getDegreeFromYear(Array.get(arrays, map2.get("Rok")).toString()))) {
                         for (Registration registration : registrationRepository.findByStudent_Id(student.getId())) {
                             registrationRepository.delete(registration);
                         }
@@ -397,6 +397,8 @@ public class ReadCSVFileService {
                         }
                         student.setYear(Array.get(arrays, map2.get("Rok")).toString());
                     }
+                    if (!student.getYear().equals(Array.get(arrays, map2.get("Rok")).toString()))
+                        student.setYear(Array.get(arrays, map2.get("Rok")).toString());
                     if (!student.getField().equals(Array.get(arrays, map2.get("Kierunek")).toString()))
                         student.setField(Array.get(arrays, map2.get("Kierunek")).toString());
                     if (!student.getPhoneNumber().equals(Array.get(arrays, map2.get("Telefon")).toString()))
