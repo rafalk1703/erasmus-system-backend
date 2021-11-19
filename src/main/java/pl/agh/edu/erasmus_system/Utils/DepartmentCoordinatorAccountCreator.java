@@ -6,7 +6,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import pl.agh.edu.erasmus_system.model.ContractsCoordinator;
 import pl.agh.edu.erasmus_system.model.CoordinatorRole;
-import pl.agh.edu.erasmus_system.repository.ContractCoordinatorRepository;
+import pl.agh.edu.erasmus_system.repositories.ContractCoordinatorRepository;
 
 @Component
 public class DepartmentCoordinatorAccountCreator implements ApplicationRunner {
