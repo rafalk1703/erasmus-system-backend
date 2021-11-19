@@ -70,6 +70,22 @@ public class EditionController {
 
         Edition editionToDelete = editionRepository.findById(editionId).get();
         List<Contract> contractsToDelete = contractRepository.findByEdition_Id(editionId);
+
+        Set<ContractsCoordinator> contractsCoordinators = new LinkedHashSet<>();
+
+        for (Contract contract : contractsToDelete) {
+            contractsCoordinators.add(contract.getContractsCoordinator());
+        }
+
+        for (ContractsCoordinator contractsCoordinator : contractsCoordinators) {
+            contractsCoordinator.setIfAccepted(false);
+            contractCoordinatorRepository.save(contractsCoordinator);
+        }
+
+        ContractsCoordinator departmentCoordinator = contractCoordinatorRepository.findByRole(CoordinatorRole.DEPARTMENT).get();
+        departmentCoordinator.setIfAccepted(false);
+        contractCoordinatorRepository.save(departmentCoordinator);
+
         List<Registration> registrationsToDelete = new LinkedList<>();
 
         for (Contract contract : contractsToDelete)
@@ -180,6 +196,10 @@ public class EditionController {
             contractsCoordinator.setIfAccepted(false);
             contractCoordinatorRepository.save(contractsCoordinator);
         }
+
+        ContractsCoordinator departmentCoordinator = contractCoordinatorRepository.findByRole(CoordinatorRole.DEPARTMENT).get();
+        departmentCoordinator.setIfAccepted(false);
+        contractCoordinatorRepository.save(departmentCoordinator);
 
         deactivatedEdition.setIsActive(false);
         editionRepository.save(deactivatedEdition);

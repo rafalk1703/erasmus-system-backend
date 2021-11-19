@@ -363,8 +363,40 @@ public class ReadCSVFileService {
                         student.setSurname(Array.get(arrays, map2.get("Nawisko")).toString());
                     if (!student.getDepartment().equals(Array.get(arrays, map2.get("Wydział")).toString()))
                         student.setDepartment(Array.get(arrays, map2.get("Wydział")).toString());
-                    if (!student.getYear().equals(Array.get(arrays, map2.get("Rok")).toString()))
+//                    Jeżeli student zmienia rok to zmienia wszystkie umowy
+                    if (!student.getYear().equals(Array.get(arrays, map2.get("Rok")).toString())) {
+                        for (Registration registration : registrationRepository.findByStudent_Id(student.getId())) {
+                            registrationRepository.delete(registration);
+                        }
+
+                        for (int i = 0; i < agreements.size(); i++) {
+                            if (!agreements.get(i).equals("BRAK")) {
+                                Registration registration = new Registration();
+                                registration.setIsNominated(false);
+                                registration.setIsAccepted(false);
+                                registration.setStudent(student);
+                                registration.setPriority(i+1);
+
+                                if (contractCoordinatorRepository.findByName(getCoordinatorNameFromAgreement(agreements.get(i))).isEmpty()) {
+                                    continue;
+                                }
+
+                                ContractsCoordinator contractsCoordinator = contractCoordinatorRepository
+                                        .findByName(getCoordinatorNameFromAgreement(agreements.get(i))).get();
+
+                                String erasmusCode = getErasmusCodeFromAgreement(agreements.get(i));
+                                String degree = getDegreeFromYear(Array.get(arrays, map2.get("Rok")).toString());
+                                if (contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(erasmusCode, contractsCoordinator.getCode(), edition, degree).isEmpty()) {
+                                    continue;
+                                }
+                                Contract contract = contractRepository.findByErasmusCodeAndContractsCoordinator_CodeAndEditionAndDegree(erasmusCode, contractsCoordinator.getCode(), edition, degree).get();
+                                registration.setContract(contract);
+                                if (registrationRepository.findByContractAndStudentAndPriority(registration.getContract(), registration.getStudent(), registration.getPriority()).isEmpty())
+                                    registrationRepository.save(registration);
+                            }
+                        }
                         student.setYear(Array.get(arrays, map2.get("Rok")).toString());
+                    }
                     if (!student.getField().equals(Array.get(arrays, map2.get("Kierunek")).toString()))
                         student.setField(Array.get(arrays, map2.get("Kierunek")).toString());
                     if (!student.getPhoneNumber().equals(Array.get(arrays, map2.get("Telefon")).toString()))

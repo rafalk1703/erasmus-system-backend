@@ -63,7 +63,11 @@ public interface RegistrationRepository extends CrudRepository<Registration, Lon
 
     Optional<Registration> findByStudent_IdAndPriority(long studentId, Integer priority);
 
+    Optional<Registration> findByStudent_IdAndPriorityAndContract_Degree(long studentId, Integer priority, String degree);
+
     Optional<Registration> findByContractAndStudentAndPriority(Contract contract, Student student, int priority);
+
+    List<Registration> findByStudent_Id(long studentId);
 
     @Query("select r from Registrations r " +
             "left join Contracts c on r.contract = c " +
