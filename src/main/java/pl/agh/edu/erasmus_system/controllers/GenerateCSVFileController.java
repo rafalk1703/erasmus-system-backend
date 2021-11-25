@@ -10,7 +10,7 @@ import java.io.IOException;
 
 
 @RestController
-@RequestMapping("api/CSVFile")
+@RequestMapping("api/csv-file")
 @CrossOrigin
 public class GenerateCSVFileController {
 

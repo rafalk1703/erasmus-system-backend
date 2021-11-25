@@ -23,7 +23,7 @@ public class StudentsController {
     @Autowired
     private SessionService sessionService;
 
-    @RequestMapping(value = "/studentsView/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/students/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity<List<Student>> getStudentsAllData(@PathVariable("edition_id") long editionId,
                                                             @RequestHeader("Session-Code") String sessionCode) {
 

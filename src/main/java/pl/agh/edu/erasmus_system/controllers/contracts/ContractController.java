@@ -25,7 +25,7 @@ public class ContractController {
     @Autowired
     private SessionService sessionService;
 
-    @RequestMapping(value = "/allContractsView", method = RequestMethod.GET)
+    @RequestMapping(value = "/contracts", method = RequestMethod.GET)
     public ResponseEntity<ContractResponseBody> getAllContracts(@RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
@@ -38,7 +38,7 @@ public class ContractController {
         return getContractResponseEntity(contracts);
     }
 
-    @RequestMapping(value = "/allContractsView/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/contracts/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity<ContractResponseBody> getAllContractsByEdition(@PathVariable("edition_id") long editionId,
                                                                          @RequestHeader("Session-Code") String sessionCode) {
 
@@ -62,7 +62,7 @@ public class ContractController {
         return getContractResponseEntity(contractsByEdition);
     }
 
-    @RequestMapping(value = "/changeNumberOfVacancies/{contract_id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/contract/change-number-of-vacancies/{contract_id}", method = RequestMethod.POST)
     public ResponseEntity changeNumberOfVacancies(@PathVariable("contract_id") long contractId,
                                                   @RequestBody ContractVacanciesRequestBody requestBody) {
 
@@ -79,7 +79,7 @@ public class ContractController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/allContractsView/{edition_id}/{coordinator_code}", method = RequestMethod.GET)
+    @RequestMapping(value = "/contracts/{edition_id}/{coordinator_code}", method = RequestMethod.GET)
     public ResponseEntity<ContractResponseBody> getAllContractsByEditionAndCoordinator(@PathVariable("edition_id") long editionId,
                                                                                        @PathVariable("coordinator_code") String coordinatorCode,
                                                                                        @RequestHeader("Session-Code") String sessionCode) {

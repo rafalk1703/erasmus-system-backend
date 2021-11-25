@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.*;
 
 @RestController
-@RequestMapping("api/edition")
+@RequestMapping("api/")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class EditionController {
 
@@ -48,7 +48,7 @@ public class EditionController {
     @Autowired
     private RegistrationService registrationService;
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/editions", method = RequestMethod.GET)
     public ResponseEntity<List<Edition>> getEditions(@RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
@@ -59,7 +59,7 @@ public class EditionController {
         return new ResponseEntity<>(editionRepository.findAll(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/edition/{edition_id}", method = RequestMethod.DELETE)
     public ResponseEntity deleteEdition(@PathVariable("edition_id") long editionId,
                                         @RequestHeader("Session-Code") String sessionCode) {
 
@@ -102,7 +102,7 @@ public class EditionController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/active", method = RequestMethod.GET)
+    @RequestMapping(value = "/edition/active", method = RequestMethod.GET)
     public ResponseEntity<Edition> getActiveEditions(@RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
@@ -115,7 +115,7 @@ public class EditionController {
         return new ResponseEntity<>(editionRepository.findByIsActiveIsTrue().get(0), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/isActive/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/edition/is-active/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity<Boolean> checkIfIsActiveEdition(@PathVariable("edition_id") long editionId,
                                                           @RequestHeader("Session-Code") String sessionCode) {
 
@@ -127,7 +127,7 @@ public class EditionController {
         return new ResponseEntity<>(editionRepository.findById(editionId).get().getIsActive(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/statistics/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/edition/statistics/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity<EditionStatisticsResponseBody> editionStatistics(@PathVariable("edition_id") long editionId,
                                                                            @RequestHeader("Session-Code") String sessionCode) {
 
@@ -174,7 +174,7 @@ public class EditionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/deactivate/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/edition/deactivate/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity deactivateEdition(@PathVariable("edition_id") long editionId,
                                             @RequestHeader("Session-Code") String sessionCode) {
 
@@ -206,7 +206,7 @@ public class EditionController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/activate/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/edition/activate/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity activateEdition(@PathVariable("edition_id") long editionId,
                                           @RequestHeader("Session-Code") String sessionCode) {
 
@@ -221,7 +221,7 @@ public class EditionController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/ifCanDownload/{edition_id}/{if_wieit}", method = RequestMethod.GET)
+    @RequestMapping(value = "/edition/if-can-download/{edition_id}/{if_wieit}", method = RequestMethod.GET)
     public ResponseEntity<String> checkIfCanDownload(@PathVariable("edition_id") long editionId,
                                              @PathVariable("if_wieit") String if_wieit,
                                           @RequestHeader("Session-Code") String sessionCode) {
@@ -236,7 +236,7 @@ public class EditionController {
         return new ResponseEntity<>("false", HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/editions/ifCanDownload", method = RequestMethod.GET)
+    @RequestMapping(value = "/editions/if-can-download", method = RequestMethod.GET)
     public ResponseEntity<IfCanDownloadEditionResponseBody> checkIfCanDownload(@RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
@@ -260,7 +260,7 @@ public class EditionController {
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/add", method= RequestMethod.POST)
+    @RequestMapping(value = "edition/add", method= RequestMethod.POST)
     public ResponseEntity<String> addNewEdition(@RequestParam("edition_year") String editionYear,
                                               @RequestParam("coordinators_file") MultipartFile coordinatorsFile,
                                               @RequestParam("contracts_file") MultipartFile contractsFile,
@@ -295,7 +295,7 @@ public class EditionController {
         }
     }
 
-    @RequestMapping(value = "/update", method= RequestMethod.POST)
+    @RequestMapping(value = "/edition/update", method= RequestMethod.POST)
     public ResponseEntity<String> updateEdition(@RequestParam("edition_id") long editionId,
                                                 @RequestParam("edit_edition_file") MultipartFile editEditionFile,
                                                 @RequestParam("session_code") String sessionCode

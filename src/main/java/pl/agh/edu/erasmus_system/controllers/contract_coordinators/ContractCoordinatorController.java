@@ -50,7 +50,7 @@ public class ContractCoordinatorController {
      * @return OK (200) when credentials are correct - with response contains sessionCode and coordinatorRole
      * UNAUTHORIZED (401) when credentials are wrong
      */
-    @RequestMapping(value ="/login", method = RequestMethod.POST)
+    @RequestMapping(value ="/coordinator/login", method = RequestMethod.POST)
     public ResponseEntity<LoginResponseBody> login(@RequestBody LoginRequestBody requestBody) {
         String email = requestBody.getEmail();
         String password = requestBody.getPassword();
@@ -67,7 +67,7 @@ public class ContractCoordinatorController {
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
-    @RequestMapping(value = "/delete/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/coordinators", method = RequestMethod.DELETE)
     public ResponseEntity deleteAllContractCoordinators(@RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
@@ -83,7 +83,7 @@ public class ContractCoordinatorController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/acceptContracts", method = RequestMethod.GET)
+    @RequestMapping(value = "/coordinator/accept", method = RequestMethod.GET)
     public ResponseEntity coordinatorAcceptsContracts(@RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
@@ -93,7 +93,7 @@ public class ContractCoordinatorController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/notify/{coordinator_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/coordinator/notify/{coordinator_id}", method = RequestMethod.GET)
     public ResponseEntity notifyCoordinator(@PathVariable("coordinator_id") long coordinatorId,
                                                       @RequestHeader("Session-Code") String sessionCode) {
 
@@ -121,7 +121,7 @@ public class ContractCoordinatorController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/notifyAll/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/coordinators/notify/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity notifyAllCoordinators(@PathVariable("edition_id") long editionId,
                                                 @RequestHeader("Session-Code") String sessionCode) {
 
@@ -157,7 +157,7 @@ public class ContractCoordinatorController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/allContractCoordinatorsView", method = RequestMethod.GET)
+    @RequestMapping(value = "/coordinators", method = RequestMethod.GET)
     public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinators(@RequestHeader("Session-Code") String sessionCode) {
 
         List<ContractsCoordinator> contractsCoordinators = contractCoordinatorRepository.findAll();
@@ -165,7 +165,7 @@ public class ContractCoordinatorController {
         return getContractCoordinatorResponseEntity(sessionCode, contractsCoordinators);
     }
 
-    @RequestMapping(value = "/allContractCoordinatorsView/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/coordinators/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity<ContractCoordinatorResponseBody> getAllContractCoordinatorsByEdition(@PathVariable("edition_id") long editionId,
                                                                                                @RequestHeader("Session-Code") String sessionCode) {
         List<Contract> contractsByEdition = contractRepository.findByEdition_Id(editionId);
@@ -201,7 +201,7 @@ public class ContractCoordinatorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/ifAccepted", method = RequestMethod.GET)
+    @RequestMapping(value = "/coordinator/if-accepted", method = RequestMethod.GET)
     public ResponseEntity<Boolean> ifAccepted(@RequestHeader("Session-Code") String sessionCode) {
 
         ContractsCoordinator coordinator = sessionService.getCoordinatorOf(sessionCode);
@@ -213,7 +213,7 @@ public class ContractCoordinatorController {
         return new ResponseEntity<>(coordinator.getIfAccepted(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/ifHasContracts/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/coordinator/if-has-contracts/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity<Boolean> ifHasContracts(@PathVariable("edition_id") long editionId,
                                                   @RequestHeader("Session-Code") String sessionCode) {
 
@@ -234,7 +234,7 @@ public class ContractCoordinatorController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/ifAllContractsQualified/{edition_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/coordinator/if-all-contracts-qualified/{edition_id}", method = RequestMethod.GET)
     public ResponseEntity<Boolean> ifAllContractsQualified(@PathVariable("edition_id") long editionId,
                                                            @RequestHeader("Session-Code") String sessionCode) {
 
