@@ -23,12 +23,19 @@ public class ContractsCoordinator {
     private String name;
 
     @Email
-    @Column
+    @Column(nullable = false)
     private String email;
 
-    @Column
+    @Column(nullable = false)
     private String hash;
 
     @Column(nullable = false)
     private String code;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CoordinatorRole role;
+
+    @Column(nullable = false)
+    private Boolean ifAccepted;
 }

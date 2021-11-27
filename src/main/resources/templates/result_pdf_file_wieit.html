@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl-PL">
+<head>
+    <title>Students</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <style>
+        #title-text {
+            text-align: center;
+        }
+
+        #container {
+            width: 100%;
+            text-align: center;
+        }
+
+        #left {
+            float: left;
+            width: auto;
+        }
+
+        #right {
+            float: right;
+            width: auto;
+        }
+
+    </style>
+
+</head>
+<body>
+<div>
+    <span><img width="180" height="70" class="logo" src="images/erasmus_logo.png"/></span>
+    <div id="title-text">Lista zasadnicza osób <u>zakwalifikowanych</u> <b>do wyjazdu na studia</b> <br></br>
+        za granicę w ramach programu Erasmus+ <br></br>
+        w roku akademickim<textarea></textarea></div>
+
+</div>
+<br></br>
+<div>Wymienieni niżej studenci <b>z Wydziału Informatyki, Elektroniki i Telekomunikacji (WIEiT)</b><br></br>
+    AGH zostali zaakceptowani na studia (miejsca z umów WIEiT):
+</div>
+<br></br>
+<!-- Students Table -->
+<div id="students">
+    <div th:if="${not #lists.isEmpty(students)}">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Lp.</th>
+                <th>Imię</th>
+                <th>Nazwisko</th>
+                <th>Nazwa Wydziału</th>
+                <th>Rok studiów<br></br>(stopień studiów)</th>
+                <th>Uczelnia Partnerska<br></br>(Erasmus kod uczelni)</th>
+                <th>Okres pobytu<br></br>liczba miesięcy</th>
+                <th>Adres e-mail studenta</th>
+                <th>Telefon kontaktowy do studenta</th>
+                <th>Wcześniejszy udział w <br></br>Programie Erasmus+ TAK/NIE</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="student, iter : ${students}">
+                <td th:text="${iter.index}"></td>
+                <td th:text="${student?.getKey().name}"></td>
+                <td th:text="${student?.getKey().surname}"></td>
+                <td th:text="${student?.getKey().department}"></td>
+                <td th:text="${student?.getKey().year}"></td>
+                <td th:text="${student?.getValue()}"></td>
+                <td th:text="${student?.getKey().periodOfStay}"></td>
+                <td th:text="${student?.getKey().email}"></td>
+                <td th:text="${student?.getKey().phoneNumber}"></td>
+                <td th:text="${student?.getKey().earlierParticipation}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<br></br>
+<br></br>
+<div id="container">
+    <div id="left">Koordynator Wydziałowy ( podpis, pieczątka lub czytelne nazwisko )</div>
+    <div id="right">Dziekan Wydziału ( podpis, pieczątka lub czytelne nazwisko )</div>
+</div>
+</body>
+</html>
